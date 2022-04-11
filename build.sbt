@@ -1,9 +1,9 @@
+import CustomKeys._
 import Dependencies._
 
 //updateOptions := updateOptions.value.withLatestSnapshots(true)
 
-//ThisBuild / scalaVersion     := "2.13.7"
-ThisBuild / scalaVersion     := "2.12.15"
+ThisBuild / scalaVersion     := "2.13.8"
 ThisBuild / version          := "0.1.0-SNAPSHOT"
 ThisBuild / organization     := "it.unich.scalafixexamples"
 ThisBuild / organizationName := "it.unich"
@@ -13,14 +13,21 @@ ThisBuild / resolvers ++= Seq (
   Resolver.sonatypeRepo("snapshots")
 )
 
+ThisBuild / pplJar := {
+  try {
+    val PPLPathName = scala.sys.process.Process("ppl-config -l").lineStream.head+"/ppl/ppl_java.jar"
+    if (file(PPLPathName).exists) Some(PPLPathName) else None
+  } catch {
+    case _ : Exception => None
+  }
+}
+
+ThisBuild / fork := true
+
 lazy val root = (project in file("."))
   .settings(
     name := "ScalaFixExamples",
-    libraryDependencies += scalaTest % Test,
-    libraryDependencies += "it.unich.scalafix" %% "scalafix" % "0.7.0",
+    libraryDependencies += "it.unich.scalafix" %% "scalafix" % "0.8.0",
     libraryDependencies += "it.unich.scalafix" % "jppl" % "0.2-SNAPSHOT",
-    
-    Compile/unmanagedJars += file("/usr/local/lib/ppl/ppl_java.jar")
+    Compile / unmanagedJars ++= pplJar.value.toSeq map file
   )
-
-// See https://www.scala-sbt.org/1.x/docs/Using-Sonatype.html for instructions on how to publish to Sonatype.
