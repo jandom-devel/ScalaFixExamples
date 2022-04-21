@@ -1,27 +1,25 @@
-/**
-  * Copyright 2022 Francesca Scozzari <francesca.scozzari@unich.it>
-  * and Gianluca Amato <gianluca.amato@unich.it>
-  *   
-  * This file is part of ScalaFixExamples, a set of examples for the
-  * ScalaFix library.
-  * ScalaFixExamples is free software: you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License as published by
-  * the Free Software Foundation, either version 3 of the License, or
-  * (at your option) any later version.
+/** Copyright 2022 Francesca Scozzari <francesca.scozzari@unich.it> and Gianluca
+  * Amato <gianluca.amato@unich.it>
   *
-  * ScalaFixExamples is distributed in the hope that it will be useful,
-  * but WITHOUT ANY WARRANTY; without even the implied warranty of a
-  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  * GNU General Public License for more details.
+  * This file is part of ScalaFixExamples, a set of examples for the ScalaFix
+  * library. ScalaFixExamples is free software: you can redistribute it and/or
+  * modify it under the terms of the GNU General Public License as published by
+  * the Free Software Foundation, either version 3 of the License, or (at your
+  * option) any later version.
   *
-  * You should have received a copy of the GNU General Public License
-  * along with ScalaFix.  If not, see <http://www.gnu.org/licenses/>.
+  * ScalaFixExamples is distributed in the hope that it will be useful, but
+  * WITHOUT ANY WARRANTY; without even the implied warranty of a MERCHANTABILITY
+  * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+  * more details.
+  *
+  * You should have received a copy of the GNU General Public License along with
+  * ScalaFix. If not, see <http://www.gnu.org/licenses/>.
   */
 
 package it.unich.scalafixexamples
 
 import it.unich.scalafix._
-import it.unich.scalafix.assignments.InputAssignment
+import it.unich.scalafix.assignments.defaultMutableAssignmentFactory
 import it.unich.scalafix.finite.FiniteEquationSystem
 import it.unich.scalafix.finite.KleeneSolver
 import it.unich.scalafix.utils.Relation
@@ -32,35 +30,45 @@ import it.unich.scalafix.finite.WorkListSolver
 import it.unich.scalafix.finite.GraphEquationSystem
 import it.unich.scalafix.lattice.Magma
 import it.unich.scalafix.lattice.Domain
+import it.unich.scalafix.assignments.MutableAssignment
 
 object ReachingDefinitionsExample extends App {
 
   var eqs: FiniteEquationSystem[Int, Set[Int]] = FiniteEquationSystem(
-    body = { rho => {
+    body = { (rho: Assignment[Int, Set[Int]]) =>
+      {
         case 1 => Set(1) -- Set(4, 7)
         case 2 => Set(2) ++ (rho(1) -- Set(5))
         case 3 => Set(3) ++ (rho(2) -- Set())
-        case 4 => Set(4) ++ (rho(3) ++ rho(7) ++ rho(6) -- Set(1,7))
+        case 4 => Set(4) ++ (rho(3) ++ rho(7) ++ rho(6) -- Set(1, 7))
         case 5 => Set(5) ++ (rho(4) -- Set(2))
         case 6 => Set(6) ++ rho(5) -- Set(3)
-        case 7 => Set(6) ++ rho(5) -- Set(1,4)
+        case 7 => Set(6) ++ rho(5) -- Set(1, 4)
       }
     },
     inputUnknowns = Set(),
-    initial = Set[Int](),
     unknowns = Range(1, 8),
-    infl = Relation(Map(1 -> Set(2), 2 -> Set(3), 3 -> Set(4), 4 -> Set(5), 5 -> Set(6,7), 6 -> Set(4), 7 -> Set(4)))
+    infl = Relation(
+      Map(
+        1 -> Set(2),
+        2 -> Set(3),
+        3 -> Set(4),
+        4 -> Set(5),
+        5 -> Set(6, 7),
+        6 -> Set(4),
+        7 -> Set(4)
+      )
+    )
   )
-  val sol = WorkListSolver(eqs)()
+  val sol = WorkListSolver(eqs)(MutableAssignment(_ => Set()))
   println(sol)
 }
-
 
 object ReachingDefinitionsExampleGraph extends App {
 
   implicit object SetIntDomain extends Domain[Set[Int]] {
-    def upperBound(x: Set[Int], y: Set[Int]) = x ++ y
-    def tryCompare(x: Set[Int], y: Set[Int]): Option[Int] = 
+    extension (x: Set[Int]) def upperBound(y: Set[Int]) = x ++ y
+    def tryCompare(x: Set[Int], y: Set[Int]): Option[Int] =
       if (x subsetOf y)
         if (x == y)
           Some(0)
@@ -73,35 +81,36 @@ object ReachingDefinitionsExampleGraph extends App {
   }
 
   var eqs: GraphEquationSystem[Int, Set[Int], String] = GraphEquationSystem(
-    unknowns = Range(0,8),
+    unknowns = Range(0, 8),
     inputUnknowns = Set(),
-    edgeAction = { rho =>  {
-        case "01" => Set(1) ++ (rho(0) -- Set(4, 7))
-        case "12" => Set(2) ++ (rho(1) -- Set(5))
-        case "23" => Set(3) ++ (rho(2) -- Set())
-        case "3674" => Set(4) ++ (rho(3) ++ rho(6) ++ rho(7) -- Set(1,7))
-        case "45" => Set(5) ++ (rho(4) -- Set(2))
-        case "56" => Set(6) ++ rho(5) -- Set(3)
-        case "57" => Set(6) ++ rho(5) -- Set(1,4)
+    edgeAction = { (rho: Assignment[Int, Set[Int]]) =>
+      {
+        case "01"   => Set(1) ++ (rho(0) -- Set(4, 7))
+        case "12"   => Set(2) ++ (rho(1) -- Set(5))
+        case "23"   => Set(3) ++ (rho(2) -- Set())
+        case "3674" => Set(4) ++ (rho(3) ++ rho(6) ++ rho(7) -- Set(1, 7))
+        case "45"   => Set(5) ++ (rho(4) -- Set(2))
+        case "56"   => Set(6) ++ rho(5) -- Set(3)
+        case "57"   => Set(6) ++ rho(5) -- Set(1, 4)
       }
     },
     source = {
-      case "01" => Set(0)
-      case "12" => Set(1)
-      case "23" => Set(2)
-      case "3674" => Set(3,6,7)
-      case "45" => Set(4)
-      case "56" => Set(5)
-      case "57" => Set(5)
+      case "01"   => Set(0)
+      case "12"   => Set(1)
+      case "23"   => Set(2)
+      case "3674" => Set(3, 6, 7)
+      case "45"   => Set(4)
+      case "56"   => Set(5)
+      case "57"   => Set(5)
     },
     target = {
-      case "01" => 1
-      case "12" => 2
-      case "23" => 3
+      case "01"   => 1
+      case "12"   => 2
+      case "23"   => 3
       case "3674" => 4
-      case "45" => 5
-      case "56" => 6
-      case "57" => 7
+      case "45"   => 5
+      case "56"   => 6
+      case "57"   => 7
     },
     outgoing = {
       case 0 => Set("01")
@@ -122,16 +131,11 @@ object ReachingDefinitionsExampleGraph extends App {
       case 5 => Set("45")
       case 6 => Set("56")
       case 7 => Set("57")
-    },
-    initial = Set[Int](),
+    }
   )
-  val sol = WorkListSolver(eqs)()
+  val sol = WorkListSolver(eqs)(MutableAssignment(_ => Set()))
   println(sol)
 }
-
-
-
-
 
 object PolyhedronExample extends App {
   PPLLoader()
@@ -188,17 +192,16 @@ object PolyhedronExample extends App {
       }
     },
     inputUnknowns = Set(), // Set(0, 1, 2, 3),
-    initial =
-      new C_Polyhedron(
-        1,
-        Degenerate_Element.EMPTY
-      ), // InputAssignment.conditional(3, 10.0, 0.0),
     unknowns = Set(0, 1, 2, 3),
     infl = Relation(Map(0 -> Set(1), 1 -> Set(2), 2 -> Set(3), 3 -> Set(1)))
   )
 
   // private val simpleEqsStrategy = HierarchicalOrdering(Left, Val(0), Left, Val(1), Val(2), Val(3), Right, Right)
-  val solver = KleeneSolver(simpleEqs)()
+  val solver = KleeneSolver(simpleEqs)(
+    MutableAssignment(_ => new C_Polyhedron(1, Degenerate_Element.EMPTY))
+  )
+
+  // InputAssignment.conditional(3, 10.0, 0.0),
 
   // mettere il widening!!! trovare in che punto metterlo?
 
@@ -264,17 +267,14 @@ object BoxExample extends App {
       }
     },
     inputUnknowns = Set(), // Set(0, 1, 2, 3),
-    initial =
-      new Double_Box(
-        1,
-        Degenerate_Element.EMPTY
-      ), // InputAssignment.conditional(3, 10.0, 0.0),
     unknowns = Set(0, 1, 2, 3),
     infl = Relation(Map(0 -> Set(1), 1 -> Set(2), 2 -> Set(3), 3 -> Set(1)))
   )
 
   // private val simpleEqsStrategy = HierarchicalOrdering(Left, Val(0), Left, Val(1), Val(2), Val(3), Right, Right)
-  val solver = KleeneSolver(simpleEqs)()
+  val solver = KleeneSolver(simpleEqs)(
+    MutableAssignment(_ => new Double_Box(1, Degenerate_Element.EMPTY))
+  )
 
   // mettere il widening!!! trovare in che punto metterlo?
 
@@ -325,17 +325,16 @@ object JPPLBoxExample extends App {
       }
     },
     inputUnknowns = Set(), // Set(0, 1, 2, 3),
-    initial =
-      new DoubleBox(
-        1,
-        it.unich.jppl.Domain.DegenerateElement.EMPTY
-      ), // InputAssignment.conditional(3, 10.0, 0.0),
     unknowns = Set(0, 1, 2, 3),
     infl = Relation(Map(0 -> Set(1), 1 -> Set(2), 2 -> Set(3), 3 -> Set(1)))
   )
 
   // private val simpleEqsStrategy = HierarchicalOrdering(Left, Val(0), Left, Val(1), Val(2), Val(3), Right, Right)
-  val solver = KleeneSolver(simpleEqs)()
+  val solver = KleeneSolver(simpleEqs)(
+    MutableAssignment(_ =>
+      new DoubleBox(1, it.unich.jppl.Domain.DegenerateElement.EMPTY)
+    )
+  )
 
   // mettere il widening!!! trovare in che punto metterlo?
 
@@ -401,17 +400,14 @@ object GenericExample extends App {
       }
     },
     inputUnknowns = Set(), // Set(0, 1, 2, 3),
-    initial =
-      new Double_Box(
-        1,
-        Degenerate_Element.EMPTY
-      ), // InputAssignment.conditional(3, 10.0, 0.0),
     unknowns = Set(0, 1, 2, 3),
     infl = Relation(Map(0 -> Set(1), 1 -> Set(2), 2 -> Set(3), 3 -> Set(1)))
   )
 
   // private val simpleEqsStrategy = HierarchicalOrdering(Left, Val(0), Left, Val(1), Val(2), Val(3), Right, Right)
-  val solver = KleeneSolver(simpleEqs)()
+  val solver = KleeneSolver(simpleEqs)(
+    MutableAssignment(_ => new Double_Box(1, Degenerate_Element.EMPTY))
+  )
 
   // mettere il widening!!! trovare in che punto metterlo?
 

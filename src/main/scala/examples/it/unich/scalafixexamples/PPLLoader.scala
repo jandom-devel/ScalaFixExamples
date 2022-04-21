@@ -26,7 +26,7 @@ import parma_polyhedra_library.Parma_Polyhedra_Library
 
 object PPLLoader {
 
-  def apply() {
+  def apply() = {
     try {
       System.loadLibrary("ppl_java")
     } catch {

@@ -3,7 +3,7 @@ import Dependencies._
 
 //updateOptions := updateOptions.value.withLatestSnapshots(true)
 
-ThisBuild / scalaVersion     := "2.13.8"
+ThisBuild / scalaVersion     := "3.1.2"
 ThisBuild / version          := "0.1.0-SNAPSHOT"
 ThisBuild / organization     := "it.unich.scalafixexamples"
 ThisBuild / organizationName := "it.unich"
@@ -27,7 +27,7 @@ ThisBuild / fork := true
 lazy val root = (project in file("."))
   .settings(
     name := "ScalaFixExamples",
-    libraryDependencies += "it.unich.scalafix" %% "scalafix" % "0.8.0",
+    libraryDependencies += "it.unich.scalafix" %% "scalafix" % "0.9.0-SNAPSHOT",
     libraryDependencies += "it.unich.scalafix" % "jppl" % "0.2-SNAPSHOT",
     Compile / unmanagedJars ++= pplJar.value.toSeq map file
   )
