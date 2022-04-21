@@ -10,7 +10,8 @@ ThisBuild / organizationName := "it.unich"
 
 ThisBuild / resolvers ++= Seq (
   Resolver.sonatypeRepo("releases"),
-  Resolver.sonatypeRepo("snapshots")
+  Resolver.sonatypeRepo("snapshots"),
+  Resolver.mavenLocal
 )
 
 ThisBuild / scalacOptions ++= Seq(
@@ -37,6 +38,6 @@ lazy val root = (project in file("."))
   .settings(
     name := "ScalaFixExamples",
     libraryDependencies += "it.unich.scalafix" %% "scalafix" % "0.9.0-SNAPSHOT",
-    libraryDependencies += "it.unich.scalafix" % "jppl" % "0.2-SNAPSHOT",
+    libraryDependencies += "it.unich.scalafix" % "jppl" % "0.3-SNAPSHOT",
     Compile / unmanagedJars ++= pplJar.value.toSeq map file
   )

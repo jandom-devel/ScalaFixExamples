@@ -291,16 +291,10 @@ object BoxExample extends App {
 object JPPLBoxExample extends App {
   // usa i nuovi binding
   import it.unich.jppl.*
-  import it.unich.jppl.Domain.*
-  val cs = new ConstraintSystem
-  val x0 = 0
-  val constraint = new it.unich.jppl.Constraint(
-    new LinearExpression(0, 1),
-    Constraint.ConstraintType.EQUAL
-  )
-  cs.add(constraint)
-
-  val box0 = new DoubleBox(cs) // altro esempio: (int, int), oppure Sign
+  
+  val c = Constraint.of(LinearExpression.of(0, 1), Constraint.ConstraintType.EQUAL)
+  val cs = ConstraintSystem.of(c)
+  val box0 = DoubleBox.from(cs) // altro esempio: (int, int), oppure Sign
 
   // val body = new Body[] {}
   // val equationSystem = FiniteEquationSystem()
@@ -311,17 +305,9 @@ object JPPLBoxExample extends App {
     body = { (rho: Int => DoubleBox) =>
       {
         case 0 => box0
-        case 1 => new DoubleBox(rho(0)).upperBoundAssign(rho(3))
-        case 2 =>
-          new DoubleBox(rho(1)).refineWithConstraint(
-            new Constraint(
-              new LinearExpression(-10, 1),
-              Constraint.ConstraintType.LESS_OR_EQUAL
-            )
-          )
-        case 3 =>
-          new DoubleBox(rho(2))
-            .affineImage(x0, new LinearExpression(1, 1), new Coefficient(1))
+        case 1 => rho(0).clone().upperBound(rho(3))
+        case 2 => rho(1).clone().refineWith(Constraint.of(LinearExpression.of(-10, 1), Constraint.ConstraintType.EQUAL))
+        case 3 => rho(2).clone().affineImage(0, LinearExpression.of(1, 1))
       }
     },
     inputUnknowns = Set(), // Set(0, 1, 2, 3),
@@ -330,11 +316,7 @@ object JPPLBoxExample extends App {
   )
 
   // private val simpleEqsStrategy = HierarchicalOrdering(Left, Val(0), Left, Val(1), Val(2), Val(3), Right, Right)
-  val solver = KleeneSolver(simpleEqs)(
-    MutableAssignment(_ =>
-      new DoubleBox(1, it.unich.jppl.Domain.DegenerateElement.EMPTY)
-    )
-  )
+  val solver = KleeneSolver(simpleEqs)(MutableAssignment(_ => DoubleBox.universe(1)))
 
   // mettere il widening!!! trovare in che punto metterlo?
 
