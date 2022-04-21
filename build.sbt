@@ -13,6 +13,15 @@ ThisBuild / resolvers ++= Seq (
   Resolver.sonatypeRepo("snapshots")
 )
 
+ThisBuild / scalacOptions ++= Seq(
+  "-deprecation",
+  "-feature",
+  "-unchecked",
+  "-Xfatal-warnings",
+  "-language:adhocExtensions",
+  "-source", "future"
+)
+
 ThisBuild / pplJar := {
   try {
     val PPLPathName = scala.sys.process.Process("ppl-config -l").lineStream.head+"/ppl/ppl_java.jar"

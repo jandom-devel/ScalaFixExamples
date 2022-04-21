@@ -18,13 +18,13 @@
 
 package it.unich.scalafixexamples
 
-import it.unich.scalafix._
+import it.unich.scalafix.*
 import it.unich.scalafix.assignments.defaultMutableAssignmentFactory
 import it.unich.scalafix.finite.FiniteEquationSystem
 import it.unich.scalafix.finite.KleeneSolver
 import it.unich.scalafix.utils.Relation
 
-import parma_polyhedra_library._
+import parma_polyhedra_library.*
 import it.unich.scalafix.finite.RoundRobinSolver
 import it.unich.scalafix.finite.WorkListSolver
 import it.unich.scalafix.finite.GraphEquationSystem
@@ -290,8 +290,8 @@ object BoxExample extends App {
 
 object JPPLBoxExample extends App {
   // usa i nuovi binding
-  import it.unich.jppl._
-  import it.unich.jppl.Domain._
+  import it.unich.jppl.*
+  import it.unich.jppl.Domain.*
   val cs = new ConstraintSystem
   val x0 = 0
   val constraint = new it.unich.jppl.Constraint(
