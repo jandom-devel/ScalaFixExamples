@@ -8,6 +8,7 @@ ThisBuild / organizationName := "it.unich"
 ThisBuild / resolvers ++= Seq (
   Resolver.sonatypeRepo("releases"),
   Resolver.sonatypeRepo("snapshots"),
+  "s01sonatype-snapshot-repo" at "https://s01.oss.sonatype.org/content/repositories/snapshots/",
   Resolver.mavenLocal
 )
 
@@ -26,5 +27,5 @@ lazy val root = (project in file("."))
   .settings(
     name := "ScalaFixExamples",
     libraryDependencies += "it.unich.scalafix" %% "scalafix" % "0.9.0-SNAPSHOT",
-    libraryDependencies += "it.unich.scalafix" % "jppl" % "0.3-SNAPSHOT",
+    libraryDependencies += "it.unich.jppl" % "jppl" % "0.3-SNAPSHOT",
   )
