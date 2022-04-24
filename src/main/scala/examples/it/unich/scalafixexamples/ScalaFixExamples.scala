@@ -20,15 +20,9 @@ package it.unich.scalafixexamples
 
 import it.unich.jppl.*
 import it.unich.scalafix.*
-import it.unich.scalafix.assignments.MutableAssignment
-import it.unich.scalafix.assignments.defaultMutableAssignmentFactory
-import it.unich.scalafix.finite.FiniteEquationSystem
-import it.unich.scalafix.finite.GraphEquationSystem
-import it.unich.scalafix.finite.KleeneSolver
-import it.unich.scalafix.finite.RoundRobinSolver
-import it.unich.scalafix.finite.WorkListSolver
+import it.unich.scalafix.assignments.*
+import it.unich.scalafix.finite.*
 import it.unich.scalafix.lattice.Domain
-import it.unich.scalafix.lattice.Magma
 import it.unich.scalafix.utils.Relation
 
 object ReachingDefinitionsExample extends App {
@@ -59,7 +53,7 @@ object ReachingDefinitionsExample extends App {
       )
     )
   )
-  val sol = WorkListSolver(eqs)(MutableAssignment(_ => Set()))
+  val sol = WorkListSolver(eqs)(InputAssignment(Set.empty[Int]))
   println(sol)
 }
 
@@ -132,7 +126,7 @@ object ReachingDefinitionsExampleGraph extends App {
       case 7 => Set("57")
     }
   )
-  val sol = WorkListSolver(eqs)(MutableAssignment(_ => Set()))
+  val sol = WorkListSolver(eqs)(InputAssignment(Set[Int]()))
   println(sol)
 }
 
@@ -173,7 +167,7 @@ class JPPLExample[P <: it.unich.jppl.Property[P]](val dom: it.unich.jppl.Domain[
 
     // private val simpleEqsStrategy = HierarchicalOrdering(Left, Val(0), Left, Val(1), Val(2), Val(3), Right, Right)
     val solver =
-      KleeneSolver(simpleEqs)(MutableAssignment(_ => dom.createEmpty(1)))
+      KleeneSolver(simpleEqs)(InputAssignment(dom.createEmpty(1)))
 
     // mettere il widening!!! trovare in che punto metterlo?
 
@@ -187,11 +181,9 @@ class JPPLExample[P <: it.unich.jppl.Property[P]](val dom: it.unich.jppl.Domain[
     println(solver)
   }
 }
-
 object JPPLPolyhedronExample extends App {
   JPPLExample[CPolyhedron](new CPolyhedronDomain()).run();
 }
-
 object JPPLBoxExample extends App {
   val c =
     Constraint.of(LinearExpression.of(0, 1), Constraint.ConstraintType.EQUAL)
@@ -227,7 +219,7 @@ object JPPLBoxExample extends App {
 
   // private val simpleEqsStrategy = HierarchicalOrdering(Left, Val(0), Left, Val(1), Val(2), Val(3), Right, Right)
   val solver =
-    KleeneSolver(simpleEqs)(MutableAssignment(_ => DoubleBox.empty(1)))
+    KleeneSolver(simpleEqs)(InputAssignment(DoubleBox.empty(1)))
 
   // mettere il widening!!! trovare in che punto metterlo?
 
