@@ -29,3 +29,4 @@ lazy val root = (project in file("."))
     libraryDependencies += "it.unich.scalafix" %% "scalafix" % "0.9.0-SNAPSHOT",
     libraryDependencies += "it.unich.jppl" % "jppl" % "0.3-SNAPSHOT",
   )
+  .enablePlugins(JmhPlugin)
