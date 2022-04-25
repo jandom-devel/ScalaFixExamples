@@ -40,21 +40,21 @@ class OverheadBoxBench:
     }
 
     @Benchmark
-    def scalafixWithoutBoxes() = {
+    def scalafixWithoutCombos() = {
         val eqs = FiniteEquationSystem(body, Set(), 0 until length, Relation(Seq.empty[(Int, Int)]))
         val sol = RoundRobinSolver(eqs)(InputAssignment(box0))
     }
 
     @Benchmark
-    def scalafixWithBoxes() = {
+    def scalafixWithCombos() = {
         val eqs = FiniteEquationSystem(body, Set(), 0 until length, Relation(Seq.empty[(Int, Int)]))
-        val box = Box( { (x: DoubleBox, y: DoubleBox) => y.clone().upperBound(x) }, true )
-        val boxes = BoxAssignment(box)
-        val eqs2 = eqs.withBoxes(boxes)
+        val combo = Combo( { (x: DoubleBox, y: DoubleBox) => y.clone().upperBound(x) }, true )
+        val combos = ComboAssignment(combo)
+        val eqs2 = eqs.withCombos(combos)
         val sol = RoundRobinSolver(eqs2)(InputAssignment(box0))
     }
  
-    def hashMap(withBoxes: Boolean, withInlineBody: Boolean) = {
+    def hashMap(withCombos: Boolean, withInlineBody: Boolean) = {
         var rho = mutable.Map[Int, DoubleBox]().withDefaultValue(box0)
         var dirty = true
         var i = 0
@@ -72,7 +72,7 @@ class OverheadBoxBench:
                     else
                         body(rho)(i)
                 var vnew = 
-                    if withBoxes 
+                    if withCombos 
                     then 
                         vtmp.clone().upperBound(v)
                     else 
@@ -84,13 +84,13 @@ class OverheadBoxBench:
     }
 
     @Benchmark
-    def hashMapWithoutBoxes() = hashMap(false, true)
+    def hashMapWithoutCombos() = hashMap(false, true)
 
 
     @Benchmark
-    def hashMapWithBoxes() = hashMap(true, true)
+    def hashMapWithCombos() = hashMap(true, true)
 
-    def array(withBoxes: Boolean, withInlineBody: Boolean) = {
+    def array(withCombos: Boolean, withInlineBody: Boolean) = {
         var rho = Array.fill(length)(box0)
         var dirty = true
         var i = 0
@@ -108,7 +108,7 @@ class OverheadBoxBench:
                     else
                         body(rho)(i)
                 var vnew = 
-                    if withBoxes 
+                    if withCombos 
                     then 
                         vtmp.clone().upperBound(v)
                     else 
