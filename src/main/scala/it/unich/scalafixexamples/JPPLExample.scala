@@ -76,6 +76,7 @@ class JPPLExample[P <: it.unich.jppl.Property[P]](val dom: it.unich.jppl.Domain[
     val solver = KleeneSolver(simpleEqs)(InputAssignment(dom.createEmpty(1)))
     println(solver)
   }
+
 }
 object JPPLBoxExample extends App {
   JPPLExample[DoubleBox](new DoubleBoxDomain()).run();
@@ -83,28 +84,26 @@ object JPPLBoxExample extends App {
 object JPPLPolyhedronExample extends App {
   JPPLExample[CPolyhedron](new CPolyhedronDomain()).run();
 }
+
+class JPPLWithWideningExample[P <: Property[P]](dom: it.unich.jppl.Domain[P]) {
+  def run() = {
+    val simpleEqs = JPPLExample[P](dom).buildEquationSystem()
+
+    val widening = Combo[P]( {(x:P,y:P) => y.clone().upperBound(x).widening(x)} )
+    val comboAssignment = ComboAssignment(widening).restrict(Set(1))
+    
+    val simpleEqsWithWidening= simpleEqs.withCombos(comboAssignment)
+    val solution = KleeneSolver(simpleEqsWithWidening)(InputAssignment(dom.createEmpty(1)))
+
+    println(solution)
+  }
+}
 object JPPLBoxWithWideningExample extends App {
 
-  val simpleEqs = JPPLExample[DoubleBox](new DoubleBoxDomain()).buildEquationSystem()
-  
-  val widening = Combo[DoubleBox]( {(x:DoubleBox,y:DoubleBox) => y.clone().upperBound(x).CC76Widening(x)} )
-  val comboAssignment = ComboAssignment(widening).restrict(Set(1))
-  
-  val simpleEqsWithWidening= simpleEqs.withCombos(comboAssignment)
-  val solution = KleeneSolver(simpleEqsWithWidening)(InputAssignment(DoubleBox.empty(1)))
-
-  println(solution)
+  JPPLWithWideningExample[DoubleBox](new DoubleBoxDomain()).run()
 }
 
 object JPPLPolyhedronWithWideningExample extends App {
 
-  val simpleEqs = JPPLExample[CPolyhedron](new CPolyhedronDomain()).buildEquationSystem()
-  
-  val widening = Combo[CPolyhedron]( {(x:CPolyhedron,y:CPolyhedron) => y.clone().upperBound(x).H79Widening(x)} )
-  val comboAssignment = ComboAssignment(widening).restrict(Set(1))
-  
-  val simpleEqsWithWidening= simpleEqs.withCombos(comboAssignment)
-  val solution = KleeneSolver(simpleEqsWithWidening)(InputAssignment(CPolyhedron.empty(1)))
-
-  println(solution)
+  JPPLWithWideningExample[CPolyhedron](new CPolyhedronDomain()).run()
 }
