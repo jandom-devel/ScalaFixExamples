@@ -25,6 +25,8 @@ import it.unich.scalafix.finite.*
 import it.unich.scalafix.lattice.Domain
 import it.unich.scalafix.utils.Relation
 
+//import it.unich.scalafix.Combo
+
 object ReachingDefinitionsExample extends App {
 
   var eqs: FiniteEquationSystem[Int, Set[Int]] = FiniteEquationSystem(
@@ -136,7 +138,7 @@ class JPPLExample[P <: it.unich.jppl.Property[P]](val dom: it.unich.jppl.Domain[
     val c =
       Constraint.of(LinearExpression.of(0, 1), Constraint.ConstraintType.EQUAL)
     val cs = ConstraintSystem.of(c)
-    val box0 = dom.createFrom(cs) // altro esempio: (int, int), oppure Sign
+    val combo0 = dom.createFrom(cs) // altro esempio: (int, int), oppure Sign
 
     // val body = new Body[] {}
     // val equationSystem = FiniteEquationSystem()
@@ -146,7 +148,7 @@ class JPPLExample[P <: it.unich.jppl.Property[P]](val dom: it.unich.jppl.Domain[
     val simpleEqs: FiniteEquationSystem[Int, P] = FiniteEquationSystem(
       body = { (rho: Int => P) =>
         {
-          case 0 => box0
+          case 0 => combo0
           case 1 => rho(0).clone().upperBound(rho(3))
           case 2 =>
             rho(1)
@@ -171,9 +173,9 @@ class JPPLExample[P <: it.unich.jppl.Property[P]](val dom: it.unich.jppl.Domain[
 
     // mettere il widening!!! trovare in che punto metterlo?
 
-    // private val wideningBox: Box[Double] = { (x1: Double, x2: Double) => if (x2 > x1) Double.PositiveInfinity else x1 }
-    // private val maxBox: Box[Double] = { (x: Double, y: Double) => x max y }
-    // private val lastBox: Box[Double] = { (_: Double, x2: Double) => x2 }
+    // private val wideningCombo: Combo[Double] = { (x1: Double, x2: Double) => if (x2 > x1) Double.PositiveInfinity else x1 }
+    // private val maxCombo: Combo[Double] = { (x: Double, y: Double) => x max y }
+    // private val lastCombo: Combo[Double] = { (_: Double, x2: Double) => x2 }
 
     // private val startRho: InputAssignment[Int, Double] = simpleEqs.initial
 
@@ -216,19 +218,25 @@ object JPPLBoxExample extends App {
     unknowns = Set(0, 1, 2, 3),
     infl = Relation(Map(0 -> Set(1), 1 -> Set(2), 2 -> Set(3), 3 -> Set(1)))
   )
+  // to add a tracer
+  //val simpleEqsWithTracer = simpleEqs.withTracer(EquationSystemTracer.debug)
 
   // private val simpleEqsStrategy = HierarchicalOrdering(Left, Val(0), Left, Val(1), Val(2), Val(3), Right, Right)
-  val solver =
-    KleeneSolver(simpleEqs)(InputAssignment(DoubleBox.empty(1)))
+  
+  val widening = Combo[DoubleBox]( {(x:DoubleBox,y:DoubleBox) => y.clone().upperBound(x).CC76Widening(x)} )
+  val comboAssignment = ComboAssignment(widening).restrict(Set(1))
+  
+  val newSimpleEqs= simpleEqs.withCombos(comboAssignment)
+  val solution = KleeneSolver(newSimpleEqs)(InputAssignment(DoubleBox.empty(1)))
 
-  // mettere il widening!!! trovare in che punto metterlo?
 
-  // private val wideningBox: Box[Double] = { (x1: Double, x2: Double) => if (x2 > x1) Double.PositiveInfinity else x1 }
-  // private val maxBox: Box[Double] = { (x: Double, y: Double) => x max y }
-  // private val lastBox: Box[Double] = { (_: Double, x2: Double) => x2 }
+
+  // private val wideningCombo: Combo[Double] = { (x1: Double, x2: Double) => if (x2 > x1) Double.PositiveInfinity else x1 }
+  // private val maxCombo: Combo[Double] = { (x: Double, y: Double) => x max y }
+  // private val lastCombo: Combo[Double] = { (_: Double, x2: Double) => x2 }
 
   // private val startRho: InputAssignment[Int, Double] = simpleEqs.initial
 
   // private type SimpleSolver[U, V] = (FiniteEquationSystem[U, V], InputAssignment[U, V]) => IOAssignment[U, V]
-  println(solver)
+  println(solution)
 }
