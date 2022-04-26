@@ -20,7 +20,6 @@ package it.unich.scalafixexamples
 
 import it.unich.jppl.*
 import it.unich.scalafix.*
-import it.unich.scalafix.assignments.*
 import it.unich.scalafix.finite.*
 import it.unich.scalafix.lattice.Domain
 import it.unich.scalafix.utils.Relation
@@ -53,7 +52,7 @@ object ReachingDefinitionsExample extends App {
       )
     )
   )
-  val sol = WorkListSolver(eqs)(InputAssignment(Set.empty[Int]))
+  val sol = WorkListSolver(eqs)(Assignment(Set.empty[Int]))
   println(sol)
 }
 
@@ -126,6 +125,6 @@ object ReachingDefinitionsExampleGraph extends App {
       case 7 => Set("57")
     }
   )
-  val sol = WorkListSolver(eqs)(InputAssignment(Set[Int]()))
+  val sol = WorkListSolver(eqs)(Assignment(Set[Int]()))
   println(sol)
 }

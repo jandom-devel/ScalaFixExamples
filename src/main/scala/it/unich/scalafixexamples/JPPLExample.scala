@@ -20,7 +20,6 @@ package it.unich.scalafixexamples
 
 import it.unich.jppl.*
 import it.unich.scalafix.*
-import it.unich.scalafix.assignments.*
 import it.unich.scalafix.finite.*
 import it.unich.scalafix.lattice.Domain
 import it.unich.scalafix.utils.Relation
@@ -73,7 +72,7 @@ class JPPLExample[P <: it.unich.jppl.Property[P]](val dom: it.unich.jppl.Domain[
 
   def run() = {
     val simpleEqs = buildEquationSystem()
-    val solver = KleeneSolver(simpleEqs)(InputAssignment(dom.createEmpty(1)))
+    val solver = KleeneSolver(simpleEqs)(Assignment(dom.createEmpty(1)))
     println(solver)
   }
 
@@ -93,7 +92,7 @@ class JPPLWithWideningExample[P <: Property[P]](dom: it.unich.jppl.Domain[P]) {
     val comboAssignment = ComboAssignment(widening).restrict(Set(1))
     
     val simpleEqsWithWidening= simpleEqs.withCombos(comboAssignment)
-    val solution = KleeneSolver(simpleEqsWithWidening)(InputAssignment(dom.createEmpty(1)))
+    val solution = KleeneSolver(simpleEqsWithWidening)(Assignment(dom.createEmpty(1)))
 
     println(solution)
   }
