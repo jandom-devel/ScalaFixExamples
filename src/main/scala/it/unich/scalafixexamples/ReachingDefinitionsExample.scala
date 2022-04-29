@@ -20,13 +20,14 @@ package it.unich.scalafixexamples
 
 import it.unich.jppl.*
 import it.unich.scalafix.*
+import it.unich.scalafix.graphs.*
 import it.unich.scalafix.finite.*
 import it.unich.scalafix.lattice.Domain
 import it.unich.scalafix.utils.Relation
 
 object ReachingDefinitionsExample extends App {
 
-  var eqs: FiniteEquationSystem[Int, Set[Int]] = FiniteEquationSystem(
+  var eqs: SimpleFiniteEquationSystem[Int, Set[Int]] = FiniteEquationSystem(
     body = { (rho: Assignment[Int, Set[Int]]) =>
       {
         case 1 => Set(1) -- Set(4, 7)
@@ -72,9 +73,7 @@ object ReachingDefinitionsExampleGraph extends App {
     def lteq(x: Set[Int], y: Set[Int]): Boolean = x subsetOf y
   }
 
-  var eqs: GraphEquationSystem[Int, Set[Int], String] = GraphEquationSystem(
-    unknowns = Range(0, 8),
-    inputUnknowns = Set(),
+  val graph = Graph[Int, Set[Int], String](
     edgeAction = { (rho: Assignment[Int, Set[Int]]) =>
       {
         case "01"   => Set(1) ++ (rho(0) -- Set(4, 7))
@@ -86,7 +85,7 @@ object ReachingDefinitionsExampleGraph extends App {
         case "57"   => Set(6) ++ rho(5) -- Set(1, 4)
       }
     },
-    source = {
+    sources = {
       case "01"   => Set(0)
       case "12"   => Set(1)
       case "23"   => Set(2)
@@ -125,6 +124,13 @@ object ReachingDefinitionsExampleGraph extends App {
       case 7 => Set("57")
     }
   )
+
+  var eqs: SimpleGraphEquationSystem[Int, Set[Int], String] = GraphEquationSystem(
+    initialGraph = graph,
+    unknowns = Range(0, 8),
+    inputUnknowns = Set(),
+  )
+
   val sol = WorkListSolver(eqs)(Assignment(Set[Int]()))
   println(sol)
 }
