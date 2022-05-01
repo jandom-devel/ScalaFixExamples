@@ -5,12 +5,15 @@ import it.unich.scalafix.assignments.*
 import it.unich.scalafix.finite.*
 import it.unich.scalafix.utils.Relation
 
+import scala.collection.mutable
+
 import org.openjdk.jmh.annotations.*
 
-import scala.collection.mutable
+import java.util.concurrent.TimeUnit
 
 @State(Scope.Benchmark)
 @Warmup(iterations = 3)
+@Fork(value = 1)
 class OverheadIntBench:
 
   def chainEquation(length: Int): Body[Int, Int] =
@@ -31,10 +34,10 @@ class OverheadIntBench:
   @Benchmark
   def scalafixWithoutCombos() = {
     val eqs = FiniteEquationSystem(
-      body,
-      Set(),
-      0 until length,
-      Relation(Seq.empty[(Int, Int)])
+      body = body,
+      unknowns = 0 until length,
+      inputUnknowns = Set(),
+      infl = Relation(Seq.empty[(Int, Int)])
     )
     val sol = RoundRobinSolver(eqs)(Assignment(0))
   }
@@ -42,10 +45,10 @@ class OverheadIntBench:
   @Benchmark
   def scalafixWithCombos() = {
     val eqs = FiniteEquationSystem(
-      body,
-      Set(),
-      0 until length,
-      Relation(Seq.empty[(Int, Int)])
+      body = body,
+      unknowns = 0 until length,
+      inputUnknowns = Set(),
+      infl = Relation(Seq.empty[(Int, Int)])
     )
     val combo = Combo({ (x: Int, y: Int) => if x > y then x else y }, true)
     val combos = ComboAssignment(combo)
@@ -56,11 +59,10 @@ class OverheadIntBench:
   @Benchmark
   def scalafixIntWithoutCombos() = {
     val eqs = new SimpleFiniteEquationSystem(
-      body,
-      Set(),
-      0 until length,
-      Relation(Seq.empty[(Int, Int)]),
-      None
+      initialBody = body,
+      initialInfl = Relation(Seq.empty[(Int, Int)]),
+      unknowns = 0 until length,
+      inputUnknowns = Set(),
     ) {
       override def getMutableAssignment(rho: Assignment[Int, Int]) =
         ArrayBasedMutableAssignment(rho, unknowns.max + 1)
@@ -69,12 +71,12 @@ class OverheadIntBench:
   }
 
   def MyRoundRobinSolver(
-      eqs: FiniteEquationSystem[Int, Int],
+      eqs: SimpleFiniteEquationSystem[Int, Int],
       start: Assignment[Int, Int]
   ) = {
     // this is the single line which has the biggest impact on performance
-    val current = eqs.getMutableAssignment(start)
-    // val current = Array.fill(length)(0)
+    //val current = eqs.getMutableAssignment(start)
+    val current = Array.fill(length)(0)
     val eqsbody = eqs.body(current)
     var dirty = true
     while dirty do
@@ -91,14 +93,14 @@ class OverheadIntBench:
   }
 
   @Benchmark
-  @CompilerControl(CompilerControl.Mode.INLINE)
+  @BenchmarkMode(Array(Mode.AverageTime))
+  @OutputTimeUnit(TimeUnit.MILLISECONDS)
   def myroundrobin() = {
     val eqs = new SimpleFiniteEquationSystem(
-      body,
-      Set(),
-      0 until length,
-      Relation(Seq.empty[(Int, Int)]),
-      None
+      initialBody = body,
+      initialInfl = Relation(Seq.empty[(Int, Int)]),
+      unknowns = 0 until length,
+      inputUnknowns = Set()
     ) {
       override def getMutableAssignment(rho: Assignment[Int, Int]) =
         ArrayBasedMutableAssignment(rho, unknowns.max + 1)

@@ -26,7 +26,7 @@ import it.unich.scalafix.utils.Relation
 
 class JPPLExample[P <: it.unich.jppl.Property[P]](val dom: it.unich.jppl.Domain[P]) {
 
-  def buildEquationSystem():FiniteEquationSystem[Int, P] = {
+  def buildEquationSystem(): SimpleFiniteEquationSystem[Int, P] = {
     /**
      * initialCs is a constraint system with the contraint:
      *  x=0
@@ -34,19 +34,19 @@ class JPPLExample[P <: it.unich.jppl.Property[P]](val dom: it.unich.jppl.Domain[
      */
     val c =  Constraint.of(LinearExpression.of(0, 1), Constraint.ConstraintType.EQUAL)
     val cs = ConstraintSystem.of(c)
-    val initialCs = dom.createFrom(cs) 
+    val initialCs = dom.createFrom(cs)
 
     /**
      * simpleEqs is the equation system corresponding to the program:
      *
-     *     x=0; 
-     * [0] while [1] (x<=10) { 
+     *     x=0;
+     * [0] while [1] (x<=10) {
      * [2]   x=x+1;
      * [3] }
      *
      * where the program points [0],[1],[2],[3] are the unknowns of the equation system.
      */
-    val simpleEqs: FiniteEquationSystem[Int, P] = FiniteEquationSystem(
+    val simpleEqs = FiniteEquationSystem[Int, P](
       body = { (rho: Int => P) =>
         {
           case 0 => initialCs
@@ -90,7 +90,7 @@ class JPPLWithWideningExample[P <: Property[P]](dom: it.unich.jppl.Domain[P]) {
 
     val widening = Combo[P]( {(x:P,y:P) => y.clone().upperBound(x).widening(x)} )
     val comboAssignment = ComboAssignment(widening).restrict(Set(1))
-    
+
     val simpleEqsWithWidening= simpleEqs.withCombos(comboAssignment)
     val solution = KleeneSolver(simpleEqsWithWidening)(Assignment(dom.createEmpty(1)))
 

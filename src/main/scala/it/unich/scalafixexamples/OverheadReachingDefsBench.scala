@@ -16,7 +16,7 @@ class OverheadReachingDefsBench {
 
   val length = 8
 
-  var eqs: FiniteEquationSystem[Int, Set[Int]] = FiniteEquationSystem(
+  var eqs: SimpleFiniteEquationSystem[Int, Set[Int]] = FiniteEquationSystem(
     body = { (rho: Int => Set[Int]) =>
       {
         case 1 => Set(1) -- Set(4, 7)

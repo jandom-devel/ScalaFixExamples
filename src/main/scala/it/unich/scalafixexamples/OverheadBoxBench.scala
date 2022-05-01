@@ -58,11 +58,11 @@ class OverheadBoxBench:
 
   @Benchmark
   def scalafixWithoutCombos() = {
-    val eqs = FiniteEquationSystem(
-      body,
-      Set(),
-      0 until length,
-      Relation(Seq.empty[(Int, Int)])
+    val eqs = FiniteEquationSystem[Int, DoubleBox](
+      body = body,
+      unknowns = 0 until length,
+      inputUnknowns = Set(),
+      infl = Relation(Seq.empty[(Int, Int)])
     )
     RoundRobinSolver(eqs)(Assignment(box0))
   }
@@ -70,10 +70,10 @@ class OverheadBoxBench:
   @Benchmark
   def scalafixWithCombos() = {
     val eqs = FiniteEquationSystem(
-      body,
-      Set(),
-      0 until length,
-      Relation(Seq.empty[(Int, Int)])
+      body = body,
+      unknowns = 0 until length,
+      inputUnknowns = Set(),
+      infl = Relation(Seq.empty[(Int, Int)])
     )
     val combo =
       Combo({ (x: DoubleBox, y: DoubleBox) => y.clone().upperBound(x) }, true)
