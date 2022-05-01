@@ -32,9 +32,14 @@ class JPPLExample[P <: it.unich.jppl.Property[P]](val dom: it.unich.jppl.Domain[
      *  x=0
      * where x is the unknown of index 0.
      */
+
     val c =  Constraint.of(LinearExpression.of(0, 1), Constraint.ConstraintType.EQUAL)
     val cs = ConstraintSystem.of(c)
     val initialCs = dom.createFrom(cs)
+
+    it.unich.jppl.PPL.ioSetVariableOutputFunction(
+       (i:Long) => "x"+i
+    )
 
     /**
      * simpleEqs is the equation system corresponding to the program:

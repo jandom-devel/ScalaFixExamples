@@ -26,7 +26,7 @@ import it.unich.scalafix.utils.Relation
 
 private type SimpleSolver[U, V] =
   (SimpleEquationSystem[U, V], Assignment[U, V], Seq[U]) => MutableAssignment[U, V]
-  
+
 class InfiniteESExample(solver: SimpleSolver[Int,Int]) {
 
   def buildEquationSystem():SimpleEquationSystem[Int, Int] = {
