@@ -50,6 +50,10 @@ class JPPLExample[P <: it.unich.jppl.Property[P]](val dom: it.unich.jppl.Domain[
      * [3] }
      *
      * where the program points [0],[1],[2],[3] are the unknowns of the equation system.
+     * 
+     * This example comes from:
+     * Gianluca Amato, Francesca Scozzari, Helmut Seidl, Kalmer Apinis, Vesal Vojdani.
+     * Efficiently intertwining widening and narrowing. Science of Computer Programming, Volume 120, 2016  
      */
     val simpleEqs = FiniteEquationSystem[Int, P](
       body = { (rho: Int => P) =>
