@@ -27,6 +27,27 @@ import it.unich.scalafix.utils.Relation
 
 object ReachingDefinitionsExample extends App {
 
+  /** 
+   * We consider the following program with 7 definitions:
+   *
+   * d1 --> i = m-1;
+   * d2 --> j = n;
+   * d3 --> a = u1;
+   *        do
+   * d4 -->   i = i+1;
+   * d5 -->   j = j-1;
+   *          if (e1) then
+   * d6 -->     a = u2;     
+   *          else
+   * d7 -->     i = u3
+   *        while (e2)
+   * 
+   * The example comes from:
+   * Alfred V. Aho, Ravi Sethi, Jeffrey D. Ullman. 
+   * Compilers. Principles, Techniques, and Tools
+   * Addison-Wesley Publishing Company 1986 
+  */
+
   var eqs: SimpleFiniteEquationSystem[Int, Set[Int]] = FiniteEquationSystem(
     body = { (rho: Assignment[Int, Set[Int]]) =>
       {
