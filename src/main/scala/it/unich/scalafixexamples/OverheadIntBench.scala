@@ -4,12 +4,10 @@ import it.unich.scalafix.*
 import it.unich.scalafix.assignments.*
 import it.unich.scalafix.finite.*
 import it.unich.scalafix.utils.Relation
-
-import scala.collection.mutable
-
 import org.openjdk.jmh.annotations.*
 
 import java.util.concurrent.TimeUnit
+import scala.collection.mutable
 
 @State(Scope.Benchmark)
 @Warmup(iterations = 3)
@@ -34,10 +32,10 @@ class OverheadIntBench:
   @Benchmark
   def scalafixWithoutCombos() = {
     val eqs = FiniteEquationSystem(
-      body = body,
+      initialBody = body,
+      initialInfl = Relation(Seq.empty[(Int, Int)]),
       unknowns = 0 until length,
-      inputUnknowns = Set(),
-      infl = Relation(Seq.empty[(Int, Int)])
+      inputUnknowns = Set()
     )
     val sol = RoundRobinSolver(eqs)(Assignment(0))
   }
@@ -45,10 +43,10 @@ class OverheadIntBench:
   @Benchmark
   def scalafixWithCombos() = {
     val eqs = FiniteEquationSystem(
-      body = body,
+      initialBody = body,
+      initialInfl = Relation(Seq.empty[(Int, Int)]),
       unknowns = 0 until length,
-      inputUnknowns = Set(),
-      infl = Relation(Seq.empty[(Int, Int)])
+      inputUnknowns = Set()
     )
     val combo = Combo({ (x: Int, y: Int) => if x > y then x else y }, true)
     val combos = ComboAssignment(combo)
@@ -62,7 +60,7 @@ class OverheadIntBench:
       initialBody = body,
       initialInfl = Relation(Seq.empty[(Int, Int)]),
       unknowns = 0 until length,
-      inputUnknowns = Set(),
+      inputUnknowns = Set()
     ) {
       override def getMutableAssignment(rho: Assignment[Int, Int]) =
         ArrayBasedMutableAssignment(rho, unknowns.max + 1)
@@ -75,7 +73,7 @@ class OverheadIntBench:
       start: Assignment[Int, Int]
   ) = {
     // this is the single line which has the biggest impact on performance
-    //val current = eqs.getMutableAssignment(start)
+    // val current = eqs.getMutableAssignment(start)
     val current = Array.fill(length)(0)
     val eqsbody = eqs.body(current)
     var dirty = true

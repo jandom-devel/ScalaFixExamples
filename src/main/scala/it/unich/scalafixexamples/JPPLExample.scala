@@ -24,39 +24,39 @@ import it.unich.scalafix.finite.*
 import it.unich.scalafix.lattice.Domain
 import it.unich.scalafix.utils.Relation
 
-class JPPLExample[P <: it.unich.jppl.Property[P]](val dom: it.unich.jppl.Domain[P]) {
+class JPPLExample[P <: it.unich.jppl.Property[P]](
+    val dom: it.unich.jppl.Domain[P]
+) {
 
-  def buildEquationSystem(): SimpleFiniteEquationSystem[Int, P] = {
-    /**
-     * initialCs is a constraint system with the contraint:
-     *  x=0
-     * where x is the unknown of index 0.
-     */
+  def buildEquationSystem() = {
 
-    val c =  Constraint.of(LinearExpression.of(0, 1), Constraint.ConstraintType.EQUAL)
+    /** initialCs is a constraint system with the contraint: x=0 where x is the
+      * unknown of index 0.
+      */
+
+    val c =
+      Constraint.of(LinearExpression.of(0, 1), Constraint.ConstraintType.EQUAL)
     val cs = ConstraintSystem.of(c)
     val initialCs = dom.createFrom(cs)
 
-    it.unich.jppl.PPL.ioSetVariableOutputFunction(
-       (i:Long) => "x"+i
-    )
+    PPL.ioSetVariableOutputFunction((i: Long) => "x" + i)
 
-    /**
-     * simpleEqs is the equation system corresponding to the program:
-     *
-     *     x=0;
-     * [0] while [1] (x<=10) {
-     * [2]   x=x+1;
-     * [3] }
-     *
-     * where the program points [0],[1],[2],[3] are the unknowns of the equation system.
-     * 
-     * This example comes from:
-     * Gianluca Amato, Francesca Scozzari, Helmut Seidl, Kalmer Apinis, Vesal Vojdani.
-     * Efficiently intertwining widening and narrowing. Science of Computer Programming, Volume 120, 2016  
-     */
-    val simpleEqs = FiniteEquationSystem[Int, P](
-      body = { (rho: Int => P) =>
+    /** simpleEqs is the equation system corresponding to the program:
+      *
+      *     x=0;
+      * [0] while [1] (x<=10) {
+      * [2]   x=x+1;
+      * [3] }
+      *
+      * where the program points [0],[1],[2],[3] are the unknowns of the
+      * equation system.
+      *
+      * This example comes from: Gianluca Amato, Francesca Scozzari, Helmut
+      * Seidl, Kalmer Apinis, Vesal Vojdani. Efficiently intertwining widening
+      * and narrowing. Science of Computer Programming, Volume 120, 2016
+      */
+    FiniteEquationSystem(
+      initialBody = (rho: Int => P) =>
         {
           case 0 => initialCs
           case 1 => rho(0).clone().upperBound(rho(3))
@@ -70,18 +70,16 @@ class JPPLExample[P <: it.unich.jppl.Property[P]](val dom: it.unich.jppl.Domain[
                 )
               )
           case 3 => rho(2).clone().affineImage(0, LinearExpression.of(1, 1))
-        }
-      },
-      inputUnknowns = Set(), // Set(0, 1, 2, 3),
-      unknowns = Set(0, 1, 2, 3),
-      infl = Relation(Map(0 -> Set(1), 1 -> Set(2), 2 -> Set(3), 3 -> Set(1)))
+        },
+      initialInfl = Relation(Map(0 -> Set(1), 1 -> Set(2), 2 -> Set(3), 3 -> Set(1))),
+      inputUnknowns = Set(0),
+      unknowns = 0 to 3,
     )
-    simpleEqs
   }
 
   def run() = {
     val simpleEqs = buildEquationSystem()
-    val solver = KleeneSolver(simpleEqs)(Assignment(dom.createEmpty(1)))
+    val solver = WorkListSolver(simpleEqs)(Assignment(dom.createEmpty(1)))
     println(solver)
   }
 
@@ -96,12 +94,14 @@ object JPPLPolyhedronExample extends App {
 class JPPLWithWideningExample[P <: Property[P]](dom: it.unich.jppl.Domain[P]) {
   def run() = {
     val simpleEqs = JPPLExample[P](dom).buildEquationSystem()
-
-    val widening = Combo[P]( {(x:P,y:P) => y.clone().upperBound(x).widening(x)} )
+    val widening = Combo[P]( (x: P, y: P) =>
+      y.clone().upperBound(x).widening(x)
+    )
     val comboAssignment = ComboAssignment(widening).restrict(Set(1))
 
-    val simpleEqsWithWidening= simpleEqs.withCombos(comboAssignment)
-    val solution = KleeneSolver(simpleEqsWithWidening)(Assignment(dom.createEmpty(1)))
+    val simpleEqsWithWidening = simpleEqs.withCombos(comboAssignment)
+    val solution =
+      WorkListSolver(simpleEqsWithWidening)(Assignment(dom.createEmpty(1)))
 
     println(solution)
   }

@@ -1,27 +1,29 @@
-/**
- * This is an example comparing two implementations of Body, in the
- * curried and uncurried variants.
- *
- * RESULTS:
- * curried: 1.659 ± 0.014  ms/op
- * curried_unopt:  2.503 ± 0.360  ms/op
- * uncurried: 3.928 ± 0.063  ms/op
- * method: 1.212 ± 0.013  ms/op
- * method_func: 1.211 ± 0.007  ms/op
- *
- * Interestingly, method_func is faster than uncurried. The problem is that uncurried requires boxing of all ints,
- * (since Function2 is type polymorphic) while in method_func some ints may be passed to the apply method as unboxed
- * primitive values. Note that Function2 has some specialization, but we need the case in which the first argument is
- * specialized and the second argument is not, which is probably not included. For the same reasong, curried and
- * curried_unopt are faster than uncurried, since in this case the applciation of the second argument is specialized.
- */
-package it.unich.scalafixexamples
+/** This is an example comparing two implementations of Body, in the curried and
+  * uncurried variants.
+  *
+  * RESULTS:
+  * curried: 1.659 ± 0.014  ms/op
+  * curried_unopt:  2.503 ± 0.360  ms/op
+  * uncurried: 3.928 ± 0.063  ms/op
+  * method: 1.212 ± 0.013  ms/op
+  * method_func: 1.211 ± 0.007  ms/op
+  *
+  * Interestingly, method_func is faster than uncurried. The problem is that
+  * uncurried requires boxing of all ints, (since Function2 is type polymorphic)
+  * while in method_func some ints may be passed to the apply method as unboxed
+  * primitive values. Note that Function2 has some specialization, but we need
+  * the case in which the first argument is specialized and the second argument
+  * is not, which is probably not optimized. For the same reason, curried and
+  * curried_unopt are faster than uncurried, since in the latter case the
+  * application of the second argument is specialized.
+  */
 
-import scala.collection.mutable
+package it.unich.scalafixexamples
 
 import org.openjdk.jmh.annotations.*
 
 import java.util.concurrent.TimeUnit
+import scala.collection.mutable
 
 class OtherFunction extends Function2[Int => Int, Int, Int]:
   val length = 200000
@@ -29,8 +31,8 @@ class OtherFunction extends Function2[Int => Int, Int, Int]:
 
   override def apply(rho: Int => Int, u: Int): Int =
     if u == 0
-      then rho(length - 1) min limit
-      else rho(u - 1) + 1
+    then rho(length - 1) min limit
+    else rho(u - 1) + 1
 
 @State(Scope.Benchmark)
 @Warmup(iterations = 3)
@@ -45,7 +47,7 @@ class BodyBench:
   val length = 200000
   val limit = 2000
 
-  val body : Body[Int, Int] =
+  val body: Body[Int, Int] =
     (rho: Int => Int) =>
       (u: Int) =>
         if u == 0
@@ -59,9 +61,9 @@ class BodyBench:
       else rho(u - 1) + 1
 
   def body3(rho: Int => Int, u: Int): Int =
-     if u == 0
-        then rho(length - 1) min limit
-        else rho(u - 1) + 1
+    if u == 0
+    then rho(length - 1) min limit
+    else rho(u - 1) + 1
 
   def validate(rho: Int => Int) = {
     for i <- 0 until length do assert(rho(i) == limit + i)

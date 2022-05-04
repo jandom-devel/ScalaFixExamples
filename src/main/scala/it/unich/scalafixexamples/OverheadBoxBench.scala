@@ -1,11 +1,9 @@
 package it.unich.scalafixexamples
 
+import it.unich.jppl.*
 import it.unich.scalafix.*
 import it.unich.scalafix.finite.*
 import it.unich.scalafix.utils.Relation
-
-import it.unich.jppl.*
-
 import org.openjdk.jmh.annotations.*
 
 import scala.collection.mutable
@@ -59,10 +57,10 @@ class OverheadBoxBench:
   @Benchmark
   def scalafixWithoutCombos() = {
     val eqs = FiniteEquationSystem[Int, DoubleBox](
-      body = body,
+      initialBody = body,
+      initialInfl = Relation(Seq.empty[(Int, Int)]),
       unknowns = 0 until length,
-      inputUnknowns = Set(),
-      infl = Relation(Seq.empty[(Int, Int)])
+      inputUnknowns = Set()
     )
     RoundRobinSolver(eqs)(Assignment(box0))
   }
@@ -70,10 +68,10 @@ class OverheadBoxBench:
   @Benchmark
   def scalafixWithCombos() = {
     val eqs = FiniteEquationSystem(
-      body = body,
+      initialBody = body,
+      initialInfl = Relation(Seq.empty[(Int, Int)]),
       unknowns = 0 until length,
-      inputUnknowns = Set(),
-      infl = Relation(Seq.empty[(Int, Int)])
+      inputUnknowns = Set()
     )
     val combo =
       Combo({ (x: DoubleBox, y: DoubleBox) => y.clone().upperBound(x) }, true)

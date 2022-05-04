@@ -1,19 +1,18 @@
-/**
- * This is a variant of BodyBench which does not use primitive types so that specialization has no impact.
- *
- * RESULTS:
- * curried: 16.227 ± 0.693  ms/op
- * curried_unopt:  17.884 ± 0.490  ms/op
- * uncurried: 15.996 ± 0.576  ms/op
- * method: 13.096 ± 0.264  ms/op
- */
+/** This is a variant of BodyBench which does not use primitive types so that
+  * specialization has no impact.
+  *
+  * RESULTS:
+  * curried: 16.227 ± 0.693  ms/op
+  * curried_unopt:  17.884 ± 0.490  ms/op
+  * uncurried: 15.996 ± 0.576  ms/op
+  * method: 13.096 ± 0.264  ms/op
+  */
 package it.unich.scalafixexamples
-
-import scala.collection.mutable
 
 import org.openjdk.jmh.annotations.*
 
 import java.util.concurrent.TimeUnit
+import scala.collection.mutable
 
 import math.Ordering.Implicits.infixOrderingOps
 
@@ -30,7 +29,7 @@ class BodyBenchObject:
   val length = 200000
   val limit = 2000
 
-  val body : Body[Int, Integer] =
+  val body: Body[Int, Integer] =
     (rho: Int => Integer) =>
       (u: Int) =>
         if u == 0
@@ -44,9 +43,9 @@ class BodyBenchObject:
       else rho(u - 1) + 1
 
   def body3(rho: Int => Integer, u: Int): Integer =
-     if u == 0
-        then rho(length - 1) min limit
-        else rho(u - 1) + 1
+    if u == 0
+    then rho(length - 1) min limit
+    else rho(u - 1) + 1
 
   def validate(rho: Int => Integer) = {
     for i <- 0 until length do assert(rho(i) == limit + i)

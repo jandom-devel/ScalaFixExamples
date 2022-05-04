@@ -1,11 +1,9 @@
 package it.unich.scalafixexamples
 
+import it.unich.jppl.*
 import it.unich.scalafix.*
 import it.unich.scalafix.finite.*
 import it.unich.scalafix.utils.Relation
-
-import it.unich.jppl.*
-
 import org.openjdk.jmh.annotations.*
 
 import scala.collection.mutable
@@ -17,7 +15,7 @@ class OverheadReachingDefsBench {
   val length = 8
 
   var eqs: SimpleFiniteEquationSystem[Int, Set[Int]] = FiniteEquationSystem(
-    body = { (rho: Int => Set[Int]) =>
+    initialBody = { (rho: Int => Set[Int]) =>
       {
         case 1 => Set(1) -- Set(4, 7)
         case 2 => Set(2) ++ (rho(1) -- Set(5))
@@ -28,9 +26,7 @@ class OverheadReachingDefsBench {
         case 7 => Set(6) ++ rho(5) -- Set(1, 4)
       }
     },
-    inputUnknowns = Set(),
-    unknowns = Range(1, 8),
-    infl = Relation(
+    initialInfl = Relation(
       Map(
         1 -> Set(2),
         2 -> Set(3),
@@ -40,7 +36,9 @@ class OverheadReachingDefsBench {
         6 -> Set(4),
         7 -> Set(4)
       )
-    )
+    ),
+    inputUnknowns = Set(),
+    unknowns = Range(1, 8)
   )
 
   @Benchmark

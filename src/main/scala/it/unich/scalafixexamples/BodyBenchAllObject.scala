@@ -1,22 +1,21 @@
-/**
- * This is a variant of BodyBenchObject where even unknowns are objects.
- *
- * RESULTS:
- * curried        avgt    5  54.253 ± 4.619  ms/op
- * curried_unopt  avgt    5  60.194 ± 3.964  ms/op
- * method         avgt    5  53.826 ± 2.190  ms/op
- * uncurried      avgt    5  53.143 ± 0.736  ms/op
- *
- * The implementation significantly slower than the other is the curred version used
- * in unoptimized way.
- */
+/** This is a variant of BodyBenchObject where both values and unknowns are
+  * objects.
+  *
+  * RESULTS:
+  * curried        avgt    5  54.253 ± 4.619  ms/op
+  * curried_unopt  avgt    5  60.194 ± 3.964  ms/op
+  * method         avgt    5  53.826 ± 2.190  ms/op
+  * uncurried      avgt    5  53.143 ± 0.736  ms/op
+  *
+  * The implementation significantly slower than the others is the curred version
+  * used in unoptimized way.
+  */
 package it.unich.scalafixexamples
-
-import scala.collection.mutable
 
 import org.openjdk.jmh.annotations.*
 
 import java.util.concurrent.TimeUnit
+import scala.collection.mutable
 
 import math.Ordering.Implicits.infixOrderingOps
 
@@ -33,7 +32,7 @@ class BodyBenchAllObject:
   val length = 200000
   val limit = 2000
 
-  val body : Body[Integer, Integer] =
+  val body: Body[Integer, Integer] =
     (rho: Integer => Integer) =>
       (u: Integer) =>
         if u == 0
@@ -47,9 +46,9 @@ class BodyBenchAllObject:
       else rho(u - 1) + 1
 
   def body3(rho: Integer => Integer, u: Integer): Integer =
-     if u == 0
-        then rho(length - 1) min limit
-        else rho(u - 1) + 1
+    if u == 0
+    then rho(length - 1) min limit
+    else rho(u - 1) + 1
 
   def validate(rho: Integer => Integer) = {
     for i <- 0 until length do assert(rho(i) == limit + i)
