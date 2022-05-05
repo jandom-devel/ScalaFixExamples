@@ -25,12 +25,11 @@ class OverheadIntBench:
   val limit = 2000
   val body = chainEquation(length)
 
-  def validate(rho: Assignment[Int, Int]) = {
+  def validate(rho: Assignment[Int, Int]) =
     for i <- 0 until length do assert(rho(i) == limit + i)
-  }
 
   @Benchmark
-  def scalafixWithoutCombos() = {
+  def scalafixWithoutCombos() =
     val eqs = FiniteEquationSystem(
       initialBody = body,
       initialInfl = Relation(Seq.empty[(Int, Int)]),
@@ -38,10 +37,9 @@ class OverheadIntBench:
       inputUnknowns = Set()
     )
     val sol = RoundRobinSolver(eqs)(Assignment(0))
-  }
 
   @Benchmark
-  def scalafixWithCombos() = {
+  def scalafixWithCombos() =
     val eqs = FiniteEquationSystem(
       initialBody = body,
       initialInfl = Relation(Seq.empty[(Int, Int)]),
@@ -52,27 +50,25 @@ class OverheadIntBench:
     val combos = ComboAssignment(combo)
     val eqs2 = eqs.withCombos(combos)
     val sol = RoundRobinSolver(eqs2)(Assignment(0))
-  }
 
   // Version using Scalafix with a custom mutable assignment based on arrays.
   @Benchmark
-  def scalafixIntWithoutCombos() = {
+  def scalafixIntWithoutCombos() =
     val eqs = new SimpleFiniteEquationSystem(
       initialBody = body,
       initialInfl = Relation(Seq.empty[(Int, Int)]),
       unknowns = 0 until length,
       inputUnknowns = Set()
-    ) {
+    ):
       override def getMutableAssignment(rho: Assignment[Int, Int]) =
         ArrayBasedMutableAssignment(rho, unknowns.max + 1)
-    }
-    val sol = RoundRobinSolver(eqs)(Assignment(0))
-  }
+
+    val sol = RoundRobinSolver(eqs)(Assignment(0))  
 
   def MyRoundRobinSolver(
       eqs: SimpleFiniteEquationSystem[Int, Int],
       start: Assignment[Int, Int]
-  ) = {
+  ) =
     // this is the single line which has the biggest impact on performance
     // val current = eqs.getMutableAssignment(start)
     val current = Array.fill(length)(0)
@@ -88,8 +84,7 @@ class OverheadIntBench:
           current(x) = newval
           dirty = true
         x += 1
-    current
-  }
+    current  
 
   // A custom round robin solver using the ScalaFix equation system array-based assignments.
   @Benchmark
@@ -99,14 +94,14 @@ class OverheadIntBench:
       initialInfl = Relation(Seq.empty[(Int, Int)]),
       unknowns = 0 until length,
       inputUnknowns = Set()
-    ) {
+    ):
       override def getMutableAssignment(rho: Assignment[Int, Int]) =
         ArrayBasedMutableAssignment(rho, unknowns.max + 1)
-    }
+    
     val sol = MyRoundRobinSolver(eqs, Assignment(0))
   }
 
-  def hashMap(withCombos: Boolean, withInlineBody: Boolean) = {
+  def hashMap(withCombos: Boolean, withInlineBody: Boolean) =
     val rho = mutable.Map.empty[Int, Int].withDefaultValue(0)
     var bodyrho = body(rho)
     var dirty = true
@@ -132,7 +127,6 @@ class OverheadIntBench:
           dirty = true
         i += 1
     rho
-  }
 
   @Benchmark
   def hashMapNotInlinedWithoutCombos() = hashMap(false, false)
@@ -146,7 +140,7 @@ class OverheadIntBench:
   @Benchmark
   def hashMapInlinedWithCombos() = hashMap(true, true)
 
-  def array(withCombos: Boolean, withInlineBody: Boolean) = {
+  def array(withCombos: Boolean, withInlineBody: Boolean) =
     val rho = Array.fill(length)(0)
     val bodyrho = body(rho)
     var dirty = true
@@ -172,7 +166,6 @@ class OverheadIntBench:
           dirty = true
         i += 1
     rho
-  }
 
   @Benchmark
   def arrayNotInlinedWithoutCombos() = array(false, false)
@@ -185,5 +178,3 @@ class OverheadIntBench:
 
   @Benchmark
   def arrayInlinedWithCombos() = array(false, true)
-
-end OverheadIntBench

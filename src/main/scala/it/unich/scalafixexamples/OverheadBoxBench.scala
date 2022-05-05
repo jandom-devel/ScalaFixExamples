@@ -35,7 +35,7 @@ class OverheadBoxBench:
         then rho(length - 1).clone().refineWith(refineConstr)
         else rho(u - 1).clone().affineImage(0, incrExpr).upperBound(rho(u - 1))
 
-  def validate(rho: Int => DoubleBox) = {
+  def validate(rho: Int => DoubleBox) =
     for i <- 0 until length do
       assert(
         rho(i).equals(
@@ -53,10 +53,9 @@ class OverheadBoxBench:
           )
         )
       )
-  }
 
   @Benchmark
-  def scalafixWithoutCombos() = {
+  def scalafixWithoutCombos() =
     val eqs = FiniteEquationSystem[Int, DoubleBox](
       initialBody = body,
       initialInfl = Relation(Seq.empty[(Int, Int)]),
@@ -64,10 +63,9 @@ class OverheadBoxBench:
       inputUnknowns = Set()
     )
     RoundRobinSolver(eqs)(Assignment(box0))
-  }
 
   @Benchmark
-  def scalafixWithCombos() = {
+  def scalafixWithCombos() =
     val eqs = FiniteEquationSystem(
       initialBody = body,
       initialInfl = Relation(Seq.empty[(Int, Int)]),
@@ -78,10 +76,9 @@ class OverheadBoxBench:
       Combo({ (x: DoubleBox, y: DoubleBox) => y.clone().upperBound(x) }, true)
     val combos = ComboAssignment(combo)
     val eqs2 = eqs.withCombos(combos)
-    RoundRobinSolver(eqs2)(Assignment(box0))
-  }
+    RoundRobinSolver(eqs2)(Assignment(box0))  
 
-  def hashMap(withCombos: Boolean, withInlineBody: Boolean) = {
+  def hashMap(withCombos: Boolean, withInlineBody: Boolean) =
     var rho = mutable.Map[Int, DoubleBox]().withDefaultValue(box0)
     var dirty = true
     var i = 0
@@ -106,7 +103,6 @@ class OverheadBoxBench:
           dirty = true
         i += 1
     rho
-  }
 
   @Benchmark
   def hashMapNotInlined() = hashMap(false, false)
@@ -114,7 +110,7 @@ class OverheadBoxBench:
   @Benchmark
   def hashMapInlined() = hashMap(false, true)
 
-  def array(withCombos: Boolean, withInlineBody: Boolean) = {
+  def array(withCombos: Boolean, withInlineBody: Boolean) =
     var rho = Array.fill(length)(box0)
     var dirty = true
     var i = 0
@@ -140,12 +136,9 @@ class OverheadBoxBench:
           dirty = true
         i += 1
     rho
-  }
 
   @Benchmark
   def arrayNotInlined() = array(false, false)
 
   @Benchmark
   def arrayInlined() = array(false, true)
-
-end OverheadBoxBench
