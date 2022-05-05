@@ -10,10 +10,11 @@ import scala.collection.mutable
 
 @State(Scope.Benchmark)
 @Warmup(iterations = 3)
+@Fork(value = 1)
 class OverheadBoxBench:
 
   val length = 200
-  val limit = 20_000
+  val limit = 2000
   val body = chainEquation(length)
 
   val box0 = DoubleBox.from(
@@ -108,10 +109,10 @@ class OverheadBoxBench:
   }
 
   @Benchmark
-  def hashMapWithoutCombos() = hashMap(false, true)
+  def hashMapNotInlined() = hashMap(false, false)
 
   @Benchmark
-  def hashMapWithCombos() = hashMap(true, true)
+  def hashMapInlined() = hashMap(false, true)
 
   def array(withCombos: Boolean, withInlineBody: Boolean) = {
     var rho = Array.fill(length)(box0)

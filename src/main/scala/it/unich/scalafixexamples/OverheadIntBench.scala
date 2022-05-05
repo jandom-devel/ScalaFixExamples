@@ -54,6 +54,7 @@ class OverheadIntBench:
     val sol = RoundRobinSolver(eqs2)(Assignment(0))
   }
 
+  // Version using Scalafix with a custom mutable assignment based on arrays.
   @Benchmark
   def scalafixIntWithoutCombos() = {
     val eqs = new SimpleFiniteEquationSystem(
@@ -90,9 +91,8 @@ class OverheadIntBench:
     current
   }
 
+  // A custom round robin solver using the ScalaFix equation system array-based assignments.
   @Benchmark
-  @BenchmarkMode(Array(Mode.AverageTime))
-  @OutputTimeUnit(TimeUnit.MILLISECONDS)
   def myroundrobin() = {
     val eqs = new SimpleFiniteEquationSystem(
       initialBody = body,
@@ -135,10 +135,16 @@ class OverheadIntBench:
   }
 
   @Benchmark
-  def hashMapWithoutCombos() = hashMap(false, true)
+  def hashMapNotInlinedWithoutCombos() = hashMap(false, false)
 
   @Benchmark
-  def hashMapWithCombos() = hashMap(true, true)
+  def hashMapNotInlinedWithCombos() = hashMap(true, false)
+
+  @Benchmark
+  def hashMapInlinedWithoutCombos() = hashMap(false, true)
+
+  @Benchmark
+  def hashMapInlinedWithCombos() = hashMap(true, true)
 
   def array(withCombos: Boolean, withInlineBody: Boolean) = {
     val rho = Array.fill(length)(0)
@@ -169,9 +175,15 @@ class OverheadIntBench:
   }
 
   @Benchmark
-  def arrayNotInlined() = array(false, false)
+  def arrayNotInlinedWithoutCombos() = array(false, false)
 
   @Benchmark
-  def arrayInlined() = array(false, true)
+  def arrayNotInlinedWithCombos() = array(true, false)
+
+  @Benchmark
+  def arrayInlinedWithoutCombos() = array(false, true)
+
+  @Benchmark
+  def arrayInlinedWithCombos() = array(false, true)
 
 end OverheadIntBench
