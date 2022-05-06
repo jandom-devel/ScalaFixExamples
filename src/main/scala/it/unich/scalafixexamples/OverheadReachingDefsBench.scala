@@ -3,7 +3,6 @@ package it.unich.scalafixexamples
 import it.unich.jppl.*
 import it.unich.scalafix.*
 import it.unich.scalafix.finite.*
-import it.unich.scalafix.utils.Relation
 import org.openjdk.jmh.annotations.*
 
 import scala.collection.mutable
@@ -26,7 +25,7 @@ class OverheadReachingDefsBench {
         case 7 => Set(6) ++ rho(5) -- Set(1, 4)
       }
     },
-    initialInfl = Relation(
+    initialInfl = InfluenceRelation(
       Map(
         1 -> Set(2),
         2 -> Set(3),

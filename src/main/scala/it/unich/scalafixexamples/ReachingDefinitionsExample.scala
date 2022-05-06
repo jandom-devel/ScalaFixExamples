@@ -23,7 +23,6 @@ import it.unich.scalafix.*
 import it.unich.scalafix.finite.*
 import it.unich.scalafix.graphs.*
 import it.unich.scalafix.lattice.Domain
-import it.unich.scalafix.utils.Relation
 
 object ReachingDefinitionsExample extends App:
 
@@ -56,7 +55,7 @@ object ReachingDefinitionsExample extends App:
       case 6 => Set(6) ++ rho(5) -- Set(3)
       case 7 => Set(6) ++ rho(5) -- Set(1, 4)
     },
-    initialInfl = Relation(
+    initialInfl = InfluenceRelation(
       Map(
         1 -> Set(2),
         2 -> Set(3),
@@ -88,7 +87,7 @@ object ReachingDefinitionsExampleGraph extends App:
       else None
     def lteq(x: Set[Int], y: Set[Int]): Boolean = x subsetOf y
 
-  val graph = Graph[Int, Set[Int], String](
+  val graph = GraphBody[Int, Set[Int], String](
     edgeAction = (rho: Assignment[Int, Set[Int]]) =>
       case "01"   => Set(1) ++ (rho(0) -- Set(4, 7))
       case "12"   => Set(2) ++ (rho(1) -- Set(5))

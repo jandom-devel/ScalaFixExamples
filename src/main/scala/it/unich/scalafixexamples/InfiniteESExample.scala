@@ -22,7 +22,6 @@ import it.unich.jppl.*
 import it.unich.scalafix.*
 import it.unich.scalafix.infinite.*
 import it.unich.scalafix.lattice.Domain
-import it.unich.scalafix.utils.Relation
 
 private type SimpleSolver[U, V] =
   (

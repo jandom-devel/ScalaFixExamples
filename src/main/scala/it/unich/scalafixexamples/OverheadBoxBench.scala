@@ -3,7 +3,6 @@ package it.unich.scalafixexamples
 import it.unich.jppl.*
 import it.unich.scalafix.*
 import it.unich.scalafix.finite.*
-import it.unich.scalafix.utils.Relation
 import org.openjdk.jmh.annotations.*
 
 import scala.collection.mutable
@@ -58,7 +57,7 @@ class OverheadBoxBench:
   def scalafixWithoutCombos() =
     val eqs = FiniteEquationSystem[Int, DoubleBox](
       initialBody = body,
-      initialInfl = Relation(Seq.empty[(Int, Int)]),
+      initialInfl = InfluenceRelation(),
       unknowns = 0 until length,
       inputUnknowns = Set()
     )
@@ -68,7 +67,7 @@ class OverheadBoxBench:
   def scalafixWithCombos() =
     val eqs = FiniteEquationSystem(
       initialBody = body,
-      initialInfl = Relation(Seq.empty[(Int, Int)]),
+      initialInfl = InfluenceRelation(),
       unknowns = 0 until length,
       inputUnknowns = Set()
     )
