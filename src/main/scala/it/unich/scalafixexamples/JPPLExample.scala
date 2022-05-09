@@ -25,6 +25,7 @@ import it.unich.scalafix.finite.*
 import it.unich.scalafix.graphs.*
 import it.unich.scalafix.lattice.Domain
 import it.unich.scalafix.utils.Relation
+import it.unich.scalafixexamples.JPPLDomanIsScalafixDomain
 
 object JPPLExampleEquationSystems:
 
@@ -173,25 +174,6 @@ object JPPLBoxWithWideningAutomaticExample extends App:
 
 object JPPLPolyhedronWithWideningAutomaticExample extends App:
   JPPLWithWideningExample[CPolyhedron](new CPolyhedronDomain()).run()
-
-given JPPLDomanIsScalafixDomain[P <: Property[P]](using
-    dom: jppl.Domain[P]
-): Domain[P] with
-
-  def lteq(x: P, y: P): Boolean = y.contains(x)
-
-  def tryCompare(x: P, y: P): Option[Int] =
-    if y.strictlyContains(x)
-    then Some(1)
-    else if x.strictlyContains(y)
-    then Some(-1)
-    else if x == y
-    then Some(0)
-    else None
-
-  extension (x: P)
-    /** It returns an upper bound of `x` and `y`. */
-    infix def upperBound(y: P): P = x.clone().upperBound(y)
 
 class JPPLGraphBasedExample[P <: Property[P]](using dom: jppl.Domain[P]):
   def run() =
