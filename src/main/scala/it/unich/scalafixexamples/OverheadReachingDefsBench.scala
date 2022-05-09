@@ -3,6 +3,8 @@ package it.unich.scalafixexamples
 import it.unich.jppl.*
 import it.unich.scalafix.*
 import it.unich.scalafix.finite.*
+import it.unich.scalafix.utils.Relation
+
 import org.openjdk.jmh.annotations.*
 
 import scala.collection.mutable
@@ -25,17 +27,8 @@ class OverheadReachingDefsBench {
         case 7 => Set(6) ++ rho(5) -- Set(1, 4)
       }
     },
-    initialInfl = InfluenceRelation(
-      Map(
-        1 -> Set(2),
-        2 -> Set(3),
-        3 -> Set(4),
-        4 -> Set(5),
-        5 -> Set(6, 7),
-        6 -> Set(4),
-        7 -> Set(4)
-      )
-    ),
+    initialInfl =
+      Relation(1 -> 2, 2 -> 3, 3 -> 4, 4 -> 5, 5 -> 6, 5 -> 7, 6 -> 4, 7 -> 4),
     inputUnknowns = Set(),
     unknowns = Range(1, 8)
   )

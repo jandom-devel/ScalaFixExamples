@@ -23,6 +23,7 @@ import it.unich.jppl.*
 import it.unich.scalafix.*
 import it.unich.scalafix.finite.*
 import it.unich.scalafix.lattice.Domain
+import it.unich.scalafix.utils.Relation
 
 class JPPLExample[P <: Property[P]](val dom: jppl.Domain[P]):
 
@@ -67,8 +68,7 @@ class JPPLExample[P <: Property[P]](val dom: jppl.Domain[P]):
             )
         case 3 => rho(2).clone().affineImage(0, LinearExpression.of(1, 1))
       },
-      initialInfl =
-        InfluenceRelation(0 -> 1, 1 -> 2, 2 -> 3, 3 -> 1),
+      initialInfl = Relation(0 -> 1, 1 -> 2, 2 -> 3, 3 -> 1),
       inputUnknowns = Set(0),
       unknowns = 0 to 3
     )

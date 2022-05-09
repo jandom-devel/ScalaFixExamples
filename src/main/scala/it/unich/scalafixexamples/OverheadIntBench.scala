@@ -3,6 +3,8 @@ package it.unich.scalafixexamples
 import it.unich.scalafix.*
 import it.unich.scalafix.assignments.*
 import it.unich.scalafix.finite.*
+import it.unich.scalafix.utils.Relation
+
 import org.openjdk.jmh.annotations.*
 
 import java.util.concurrent.TimeUnit
@@ -31,7 +33,7 @@ class OverheadIntBench:
   def scalafixWithoutCombos() =
     val eqs = FiniteEquationSystem(
       initialBody = body,
-      initialInfl = InfluenceRelation(),
+      initialInfl = Relation(),
       unknowns = 0 until length,
       inputUnknowns = Set()
     )
@@ -41,7 +43,7 @@ class OverheadIntBench:
   def scalafixWithCombos() =
     val eqs = FiniteEquationSystem(
       initialBody = body,
-      initialInfl = InfluenceRelation(),
+      initialInfl = Relation(),
       unknowns = 0 until length,
       inputUnknowns = Set()
     )
@@ -55,7 +57,7 @@ class OverheadIntBench:
   def scalafixIntWithoutCombos() =
     val eqs = new SimpleFiniteEquationSystem(
       initialBody = body,
-      initialInfl = InfluenceRelation(),
+      initialInfl = Relation(),
       unknowns = 0 until length,
       inputUnknowns = Set()
     ):
@@ -90,7 +92,7 @@ class OverheadIntBench:
   def myroundrobin() = {
     val eqs = new SimpleFiniteEquationSystem(
       initialBody = body,
-      initialInfl = InfluenceRelation(),
+      initialInfl = Relation(),
       unknowns = 0 until length,
       inputUnknowns = Set()
     ):

@@ -23,22 +23,14 @@ import it.unich.scalafix.*
 import it.unich.scalafix.finite.*
 import it.unich.scalafix.graphs.*
 import it.unich.scalafix.lattice.Domain
+import it.unich.scalafix.utils.Relation
 
 object ReachingDefinitionsExample extends App:
 
   /** We consider the following program with 7 definitions:
     *
-    * d1 --> i = m-1;
-    * d2 --> j = n;
-    * d3 --> a = u1;
-    *        do
-    * d4 -->   i = i+1;
-    * d5 -->   j = j-1;
-    *          if (e1) then
-    * d6 -->     a = u2;
-    *          else
-    * d7 -->     i = u3
-    *        while (e2)
+    * d1 --> i = m-1; d2 --> j = n; d3 --> a = u1; do d4 --> i = i+1; d5 --> j =
+    * j-1; if (e1) then d6 --> a = u2; else d7 --> i = u3 while (e2)
     *
     * The example comes from: Alfred V. Aho, Ravi Sethi, Jeffrey D. Ullman.
     * Compilers. Principles, Techniques, and Tools Addison-Wesley Publishing
@@ -55,17 +47,8 @@ object ReachingDefinitionsExample extends App:
       case 6 => Set(6) ++ rho(5) -- Set(3)
       case 7 => Set(6) ++ rho(5) -- Set(1, 4)
     },
-    initialInfl = InfluenceRelation(
-      Map(
-        1 -> Set(2),
-        2 -> Set(3),
-        3 -> Set(4),
-        4 -> Set(5),
-        5 -> Set(6, 7),
-        6 -> Set(4),
-        7 -> Set(4)
-      )
-    ),
+    initialInfl =
+      Relation(1 -> 2, 2 -> 3, 3 -> 4, 4 -> 5, 5 -> 6, 5 -> 7, 6 -> 4, 7 -> 4),
     inputUnknowns = Set(1),
     unknowns = 1 to 7
   )
@@ -96,7 +79,7 @@ object ReachingDefinitionsExampleGraph extends App:
       case "45"   => Set(5) ++ (rho(4) -- Set(2))
       case "56"   => Set(6) ++ rho(5) -- Set(3)
       case "57"   => Set(6) ++ rho(5) -- Set(1, 4),
-    sources =
+    sources = Relation {
       case "01"   => Set(0)
       case "12"   => Set(1)
       case "23"   => Set(2)
@@ -104,8 +87,8 @@ object ReachingDefinitionsExampleGraph extends App:
       case "45"   => Set(4)
       case "56"   => Set(5)
       case "57"   => Set(5)
-    ,
-    target =
+    },
+    target = 
       case "01"   => 1
       case "12"   => 2
       case "23"   => 3
@@ -114,7 +97,7 @@ object ReachingDefinitionsExampleGraph extends App:
       case "56"   => 6
       case "57"   => 7
     ,
-    outgoing =
+    outgoing = Relation {
       case 0 => Set("01")
       case 1 => Set("12")
       case 2 => Set("23")
@@ -123,8 +106,8 @@ object ReachingDefinitionsExampleGraph extends App:
       case 5 => Set("56", "57")
       case 6 => Set("3674")
       case 7 => Set("3674")
-    ,
-    ingoing =
+    },
+    ingoing = Relation {
       case 0 => Set()
       case 1 => Set("01")
       case 2 => Set("12")
@@ -133,13 +116,13 @@ object ReachingDefinitionsExampleGraph extends App:
       case 5 => Set("45")
       case 6 => Set("56")
       case 7 => Set("57")
+    }
   )
-
   var eqs = GraphEquationSystem(
-      initialGraph = graph,
-      unknowns = 0 to 7,
-      inputUnknowns = Set(0)
-    )
+    initialGraph = graph,
+    unknowns = 0 to 7,
+    inputUnknowns = Set(0)
+  )
 
   val sol = WorkListSolver(eqs)(Assignment(Set[Int]()))
   println(sol)
