@@ -28,10 +28,12 @@ import it.unich.scalafix.utils.Relation
 
 object JPPLExampleEquationSystems:
 
+  // the constraint system {x=0}
   val csxeq0 = ConstraintSystem.of(
     Constraint.of(LinearExpression.of(0, 1), Constraint.ConstraintType.EQUAL)
   )
 
+  // the constraint x<=10
   val cxleq10 = Constraint.of(
     LinearExpression.of(-10, 1),
     Constraint.ConstraintType.LESS_OR_EQUAL
@@ -39,7 +41,7 @@ object JPPLExampleEquationSystems:
 
   def buildFiniteEQS[P <: Property[P]](dom: jppl.Domain[P]) =
 
-    /** initialCs is a constraint system with the contraint: x=0 where x is the
+    /** initialCs is a constraint system with the constraint: x=0 where x is the
       * unknown of index 0.
       */
     val initialCs = dom.createFrom(csxeq0)
@@ -65,12 +67,7 @@ object JPPLExampleEquationSystems:
         case 2 =>
           rho(1)
             .clone()
-            .refineWith(
-              Constraint.of(
-                LinearExpression.of(-10, 1),
-                Constraint.ConstraintType.LESS_OR_EQUAL
-              )
-            )
+            .refineWith(cxleq10)
         case 3 => rho(2).clone().affineImage(0, LinearExpression.of(1, 1))
       },
       initialInfl = Relation(0 -> 1, 1 -> 2, 2 -> 3, 3 -> 1),
@@ -82,8 +79,7 @@ object JPPLExampleEquationSystems:
 
     val graphBody = GraphBody[Int, P, String](
       sources = Relation("enter" -> 0, "x<=10" -> 1, "x=x+1" -> 2, "loop" -> 3),
-      target =
-        Map("x=0" -> 0, "enter" -> 1, "x<=10" -> 2, "x=x+1" -> 3, "loop" -> 1),
+      target =  Map("x=0" -> 0, "enter" -> 1, "x<=10" -> 2, "x=x+1" -> 3, "loop" -> 1),
       ingoing = Relation(
         0 -> "x=0",
         1 -> "enter",
