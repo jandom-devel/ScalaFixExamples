@@ -25,28 +25,25 @@ import it.unich.scalafix.finite.*
 import it.unich.scalafix.graphs.*
 import it.unich.scalafix.lattice.Domain
 import it.unich.scalafix.utils.Relation
-//import it.unich.scalafixexamples.JPPLDomanIsScalafixDomain ??? 
+//import it.unich.scalafixexamples.JPPLDomanIsScalafixDomain ???
 
 object JPPLExampleEquationSystems:
 
   // the constraint system {x=0}
-  val csxeq0 = ConstraintSystem.of(
+  val xeq0 = ConstraintSystem.of(
     Constraint.of(LinearExpression.of(0, 1), Constraint.ConstraintType.EQUAL)
   )
 
   // the constraint x<=10
-  val cxleq10 = Constraint.of(
+  val xleq10 = Constraint.of(
     LinearExpression.of(-10, 1),
     Constraint.ConstraintType.LESS_OR_EQUAL
   )
 
+  // the linear expression x+1
+  val xplus1 = LinearExpression.of(1, 1)
+
   def buildFiniteEQS[P <: Property[P]](dom: jppl.Domain[P]) =
-
-    /** initialCs is a constraint system with the constraint: x=0 where x is the
-      * unknown of index 0.
-      */
-    val initialCs = dom.createFrom(csxeq0)
-
     /** This is the equation system corresponding to the program:
       * ```
       *      x=0;
@@ -63,13 +60,10 @@ object JPPLExampleEquationSystems:
       */
     FiniteEquationSystem(
       initialBody = (rho: Int => P) => {
-        case 0 => initialCs
+        case 0 => dom.createFrom(xeq0)
         case 1 => rho(0).clone().upperBound(rho(3))
-        case 2 =>
-          rho(1)
-            .clone()
-            .refineWith(cxleq10)
-        case 3 => rho(2).clone().affineImage(0, LinearExpression.of(1, 1))
+        case 2 => rho(1).clone().refineWith(xleq10)
+        case 3 => rho(2).clone().affineImage(0, xplus1)
       },
       initialInfl = Relation(0 -> 1, 1 -> 2, 2 -> 3, 3 -> 1),
       inputUnknowns = Set(0),
@@ -80,7 +74,8 @@ object JPPLExampleEquationSystems:
 
     val graphBody = GraphBody[Int, P, String](
       sources = Relation("enter" -> 0, "x<=10" -> 1, "x=x+1" -> 2, "loop" -> 3),
-      target =  Map("x=0" -> 0, "enter" -> 1, "x<=10" -> 2, "x=x+1" -> 3, "loop" -> 1),
+      target =
+        Map("x=0" -> 0, "enter" -> 1, "x<=10" -> 2, "x=x+1" -> 3, "loop" -> 1),
       ingoing = Relation(
         0 -> "x=0",
         1 -> "enter",
@@ -96,11 +91,10 @@ object JPPLExampleEquationSystems:
       ),
       edgeAction = { (rho: Assignment[Int, P]) =>
         {
-          case "x=0"   => dom.createFrom(csxeq0)
+          case "x=0"   => dom.createFrom(xeq0)
           case "enter" => rho(0)
-          case "x<=10" => rho(1).clone().refineWith(cxleq10)
-          case "x=x+1" =>
-            rho(2).clone().affineImage(0, LinearExpression.of(1, 1))
+          case "x<=10" => rho(1).clone().refineWith(xleq10)
+          case "x=x+1" => rho(2).clone().affineImage(0, xplus1)
           case "loop" => rho(3)
         }
       },
