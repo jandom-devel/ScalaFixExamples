@@ -23,8 +23,9 @@ import it.unich.jppl.*
 import it.unich.scalafix.*
 import it.unich.scalafix.finite.*
 import it.unich.scalafix.graphs.*
-//import it.unich.scalafix.lattice.Domain
 import it.unich.scalafix.utils.Relation
+import it.unich.scalafix.finite.FiniteFixpointSolver.Params
+import it.unich.scalafix.FixpointSolver.*
 
 object LocalizedEquationSystems:
 
@@ -180,3 +181,27 @@ object JPPLBoxLocalizedExample extends App:
 object JPPLPolyhedronLocalizedExample extends App:
   LocalizedExample[CPolyhedron](true)(using new CPolyhedronDomain()).run()
 
+class LocalizedExampleSimpleAPI[P <: Property[P]](using dom: jppl.Domain[P]):
+  def run() =
+    val eqs = LocalizedEquationSystems.buildGraphEQS(dom)
+    val widening = Combo[P]((x: P, y: P) => y.clone().upperBound(x).widening(x))
+    val narrowing = Combo[P]((x: P, y: P) => y.clone().intersection(x))
+    val params = Params[Int, P](
+      solver = Solver.WorkListSolver,
+      start = Assignment(dom.createEmpty(2)),
+      combolocation = ComboLocation.Loop,
+      comboscope = ComboScope.Localized,
+      combostrategy = ComboStrategy.TwoPhases,
+      restartstrategy = RestartStrategy.None,
+      wideningComboAssn = ComboAssignment(widening),
+      narrowingComboAssn = ComboAssignment(narrowing),
+      tracer = FixpointSolverTracer.empty
+    )
+    val solution = FiniteFixpointSolver(eqs, params)
+    println(solution(3))
+
+object JPPLBoxLocalizedSimpleAPIExample extends App:
+  LocalizedExampleSimpleAPI[DoubleBox](using new DoubleBoxDomain()).run()
+
+object JPPLPolyhedronLocalizedSimpleAPIExample extends App:
+  LocalizedExampleSimpleAPI[CPolyhedron](using new CPolyhedronDomain()).run()
