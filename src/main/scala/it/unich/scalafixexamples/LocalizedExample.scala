@@ -137,7 +137,8 @@ object LocalizedEquationSystems:
           case "j=j+1" => rho(6).clone().affineImage(2, LinearExpression.of(1, 0, 1))  
           case "i=i+1" => rho(7).clone().affineImage(1, LinearExpression.of(1, 1, 0))  
         }
-      }
+      },
+      combiner = { _.clone().upperBound(_) }
     )
 
     /** simpleEqs is the equation system corresponding to the program:

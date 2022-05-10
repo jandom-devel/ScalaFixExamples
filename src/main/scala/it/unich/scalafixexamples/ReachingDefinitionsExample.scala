@@ -57,19 +57,6 @@ object ReachingDefinitionsExample extends App:
 
 object ReachingDefinitionsExampleGraph extends App:
 
-  given Domain[Set[Int]] with
-    extension (x: Set[Int]) def upperBound(y: Set[Int]) = x ++ y
-    def tryCompare(x: Set[Int], y: Set[Int]): Option[Int] =
-      if (x subsetOf y)
-        if (x == y)
-          Some(0)
-        else
-          Some(-1)
-      else if (y subsetOf x)
-        Some(1)
-      else None
-    def lteq(x: Set[Int], y: Set[Int]): Boolean = x subsetOf y
-
   val graph = GraphBody[Int, Set[Int], String](
     edgeAction = (rho: Assignment[Int, Set[Int]]) =>
       case "01"   => Set(1) ++ (rho(0) -- Set(4, 7))
@@ -116,7 +103,8 @@ object ReachingDefinitionsExampleGraph extends App:
       case 5 => Set("45")
       case 6 => Set("56")
       case 7 => Set("57")
-    }
+    },
+    combiner = _ ++ _
   )
   var eqs = GraphEquationSystem(
     initialGraph = graph,

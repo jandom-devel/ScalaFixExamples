@@ -103,7 +103,8 @@ object JPPLExampleEquationSystems:
             rho(2).clone().affineImage(0, LinearExpression.of(1, 1))
           case "loop" => rho(3)
         }
-      }
+      },
+      combiner = _.clone().upperBound(_)
     )
 
     /** simpleEqs is the equation system corresponding to the program:
