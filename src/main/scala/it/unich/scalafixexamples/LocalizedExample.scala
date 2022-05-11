@@ -79,7 +79,6 @@ object LocalizedEquationSystems:
     * Kalmer Apinis, Vesal Vojdani. Efficiently intertwining widening and
     * narrowing. Science of Computer Programming, Volume 120, 2016
     */
-
   def buildGraphEQS[P <: Property[P]](dom: jppl.Domain[P]) =
 
     val graphBody = GraphBody[Int, P, String](
@@ -144,16 +143,13 @@ object LocalizedEquationSystems:
           case "outerLoop"   => rho(9)
           case "i<10"        => rho(1).clone().refineWith(ciless10)
           case "i>=10"       => rho(1).clone().refineWith(cigeq10)
-          case "j=0" =>
-            rho(2).clone().affineImage(1, LinearExpression.of(0, 0, 0))
+          case "j=0"         => rho(2).clone().affineImage(1, LinearExpression.of(0, 0, 0))
           case "inInnerLoop" => rho(4)
           case "innerLoop"   => rho(7)
           case "j<10"        => rho(5).clone().refineWith(cjless10)
           case "j>=10"       => rho(5).clone().refineWith(cjgeq10)
-          case "j=j+1" =>
-            rho(6).clone().affineImage(1, LinearExpression.of(1, 0, 1))
-          case "i=i+1" =>
-            rho(7).clone().affineImage(0, LinearExpression.of(1, 1, 0))
+          case "j=j+1"       => rho(6).clone().affineImage(1, LinearExpression.of(1, 0, 1))
+          case "i=i+1"       => rho(7).clone().affineImage(0, LinearExpression.of(1, 1, 0))
         }
       },
       combiner = { _.clone().upperBound(_) }
@@ -174,27 +170,27 @@ class LocalizedExample[P <: Property[P]](localized: Boolean)(using
       case 1 => "j"
       case i => "x" + i
     })
-    val simpleEqs = LocalizedEquationSystems.buildGraphEQS(dom)
+    val eqs = LocalizedEquationSystems.buildGraphEQS(dom)
     val widening = Combo[P]((x: P, y: P) => y.clone().upperBound(x).widening(x))
-    val ordering = DFOrdering(simpleEqs)
+    val ordering = DFOrdering(eqs)
     println(ordering)
     val wideningAssignment = ComboAssignment(widening).restrict(ordering)
-    val simpleEqsWithWidening =
+    val eqsWithWidening =
       if localized
-      then simpleEqs.withLocalizedCombos(wideningAssignment, ordering)
-      else simpleEqs.withCombos(wideningAssignment)
+      then eqs.withLocalizedCombos(wideningAssignment, ordering)
+      else eqs.withCombos(wideningAssignment)
     val solutionAscending =
-      WorkListSolver(simpleEqsWithWidening)(Assignment(dom.createEmpty(2)))
+      WorkListSolver(eqsWithWidening)(Assignment(dom.createEmpty(2)))
 
     val narrowing = Combo[P]((x: P, y: P) => y.clone().intersection(x))
 
     val narrowingAssignment = ComboAssignment(narrowing).restrict(ordering)
-    val simpleEqsWithNarrowing =
+    val eqsWithNarrowing =
       if localized
-      then simpleEqs.withLocalizedCombos(narrowingAssignment, ordering)
-      else simpleEqs.withCombos(narrowingAssignment)
+      then eqs.withLocalizedCombos(narrowingAssignment, ordering)
+      else eqs.withCombos(narrowingAssignment)
     val solution =
-      WorkListSolver(simpleEqsWithNarrowing)(solutionAscending)
+      WorkListSolver(eqsWithNarrowing)(solutionAscending)
     println(solution(3))
 
 object JPPLBoxNotLocalizedExample extends App:
@@ -211,6 +207,11 @@ object JPPLPolyhedronLocalizedExample extends App:
 
 class LocalizedExampleSimpleAPI[P <: Property[P]](using dom: jppl.Domain[P]):
   def run() =
+    PPL.ioSetVariableOutputFunction({
+      case 0 => "i"
+      case 1 => "j"
+      case i => "x" + i
+    })
     val eqs = LocalizedEquationSystems.buildGraphEQS(dom)
     val widening = Combo[P]((x: P, y: P) => y.clone().upperBound(x).widening(x))
     val narrowing = Combo[P]((x: P, y: P) => y.clone().intersection(x))
