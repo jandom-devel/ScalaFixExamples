@@ -23,9 +23,8 @@ import it.unich.jppl.*
 import it.unich.scalafix.*
 import it.unich.scalafix.finite.*
 import it.unich.scalafix.graphs.*
+import it.unich.scalafix.highlevel.*
 import it.unich.scalafix.utils.Relation
-import it.unich.scalafix.finite.FiniteFixpointSolver.Params
-import it.unich.scalafix.FixpointSolver.*
 
 object LocalizedEquationSystems:
 
@@ -63,33 +62,54 @@ object LocalizedEquationSystems:
     Constraint.ConstraintType.GREATER_OR_EQUAL
   )
 
-    /** This is the equation system corresponding to the program:
-      * ```
-      *     i = 0
-      * [0] while [1] (i<10){
-      * [2]   j = 0
-      * [4]   while [5] (j<10) 
-      * [6]     j = j+1 [8]
-      * [7]   i = i+1   [9]
-      *     } [3]
-      * ```
-      * where the program points [0],...,[9] are the unknowns of the
-      * equation system.
-      *
-      * This example comes from: Gianluca Amato, Francesca Scozzari, Helmut
-      * Seidl, Kalmer Apinis, Vesal Vojdani. Efficiently intertwining widening
-      * and narrowing. Science of Computer Programming, Volume 120, 2016
-      */
+  /** This is the equation system corresponding to the program:
+    * ```
+    *     i = 0
+    * [0] while [1] (i<10){
+    * [2]   j = 0
+    * [4]   while [5] (j<10)
+    * [6]     j = j+1 [8]
+    * [7]   i = i+1   [9]
+    *     } [3]
+    * ```
+    * where the program points [0],...,[9] are the unknowns of the equation
+    * system.
+    *
+    * This example comes from: Gianluca Amato, Francesca Scozzari, Helmut Seidl,
+    * Kalmer Apinis, Vesal Vojdani. Efficiently intertwining widening and
+    * narrowing. Science of Computer Programming, Volume 120, 2016
+    */
 
   def buildGraphEQS[P <: Property[P]](dom: jppl.Domain[P]) =
 
     val graphBody = GraphBody[Int, P, String](
-      sources = Relation("inOuterLoop" -> 0, "outerLoop" -> 9, "i>=10" -> 1, 
-                         "i<10" -> 1, "j=0" -> 2, "inInnerLoop" -> 4, "innerLoop" -> 7,
-                         "j<10" -> 5, "j=j+1" -> 6, "j>=10" -> 5, "i=i+1" -> 8),
-      target = Map("i=0" -> 0, "inOuterLoop" -> 1, "outerLoop" -> 1, "i>=10" -> 3, 
-                   "i<10" -> 2, "j=0" -> 4, "inInnerLoop" -> 5, "innerLoop" -> 5,
-                   "j<10" -> 6, "j=j+1" -> 7, "j>=10" -> 8, "i=i+1" -> 9),
+      sources = Relation(
+        "inOuterLoop" -> 0,
+        "outerLoop" -> 9,
+        "i>=10" -> 1,
+        "i<10" -> 1,
+        "j=0" -> 2,
+        "inInnerLoop" -> 4,
+        "innerLoop" -> 7,
+        "j<10" -> 5,
+        "j=j+1" -> 6,
+        "j>=10" -> 5,
+        "i=i+1" -> 8
+      ),
+      target = Map(
+        "i=0" -> 0,
+        "inOuterLoop" -> 1,
+        "outerLoop" -> 1,
+        "i>=10" -> 3,
+        "i<10" -> 2,
+        "j=0" -> 4,
+        "inInnerLoop" -> 5,
+        "innerLoop" -> 5,
+        "j<10" -> 6,
+        "j=j+1" -> 7,
+        "j>=10" -> 8,
+        "i=i+1" -> 9
+      ),
       ingoing = Relation(
         0 -> "i=0",
         1 -> "inOuterLoop",
@@ -119,56 +139,64 @@ object LocalizedEquationSystems:
       ),
       edgeAction = { (rho: Assignment[Int, P]) =>
         {
-          case "i=0" => dom.createFrom(csieq0)
+          case "i=0"         => dom.createFrom(csieq0)
           case "inOuterLoop" => rho(0)
-          case "outerLoop" => rho(9)
-          case "i<10" => rho(1).clone().refineWith(ciless10)
-          case "i>=10" => rho(1).clone().refineWith(cigeq10)
-          case "j=0" => rho(2).clone().affineImage(1, LinearExpression.of(0, 0, 0))  
+          case "outerLoop"   => rho(9)
+          case "i<10"        => rho(1).clone().refineWith(ciless10)
+          case "i>=10"       => rho(1).clone().refineWith(cigeq10)
+          case "j=0" =>
+            rho(2).clone().affineImage(1, LinearExpression.of(0, 0, 0))
           case "inInnerLoop" => rho(4)
-          case "innerLoop" => rho(7)
-          case "j<10" => rho(5).clone().refineWith(cjless10)
-          case "j>=10" => rho(5).clone().refineWith(cjgeq10)
-          case "j=j+1" => rho(6).clone().affineImage(1, LinearExpression.of(1, 0, 1))  
-          case "i=i+1" => rho(7).clone().affineImage(0, LinearExpression.of(1, 1, 0))  
+          case "innerLoop"   => rho(7)
+          case "j<10"        => rho(5).clone().refineWith(cjless10)
+          case "j>=10"       => rho(5).clone().refineWith(cjgeq10)
+          case "j=j+1" =>
+            rho(6).clone().affineImage(1, LinearExpression.of(1, 0, 1))
+          case "i=i+1" =>
+            rho(7).clone().affineImage(0, LinearExpression.of(1, 1, 0))
         }
       },
       combiner = { _.clone().upperBound(_) }
     )
-  
+
     GraphEquationSystem(
       initialGraph = graphBody,
       unknowns = 0 to 9,
       inputUnknowns = Set(0)
     )
 
-class LocalizedExample[P <: Property[P]](localized: Boolean)(using dom: jppl.Domain[P]):
+class LocalizedExample[P <: Property[P]](localized: Boolean)(using
+    dom: jppl.Domain[P]
+):
   def run() =
     PPL.ioSetVariableOutputFunction({
       case 0 => "i"
       case 1 => "j"
-      case i => "x" + i})
+      case i => "x" + i
+    })
     val simpleEqs = LocalizedEquationSystems.buildGraphEQS(dom)
     val widening = Combo[P]((x: P, y: P) => y.clone().upperBound(x).widening(x))
     val ordering = DFOrdering(simpleEqs)
     println(ordering)
     val wideningAssignment = ComboAssignment(widening).restrict(ordering)
-    val simpleEqsWithWidening = if localized 
+    val simpleEqsWithWidening =
+      if localized
       then simpleEqs.withLocalizedCombos(wideningAssignment, ordering)
       else simpleEqs.withCombos(wideningAssignment)
     val solutionAscending =
       WorkListSolver(simpleEqsWithWidening)(Assignment(dom.createEmpty(2)))
-    
+
     val narrowing = Combo[P]((x: P, y: P) => y.clone().intersection(x))
 
     val narrowingAssignment = ComboAssignment(narrowing).restrict(ordering)
-    val simpleEqsWithNarrowing = if localized 
+    val simpleEqsWithNarrowing =
+      if localized
       then simpleEqs.withLocalizedCombos(narrowingAssignment, ordering)
       else simpleEqs.withCombos(narrowingAssignment)
     val solution =
       WorkListSolver(simpleEqsWithNarrowing)(solutionAscending)
     println(solution(3))
-     
+
 object JPPLBoxNotLocalizedExample extends App:
   LocalizedExample[DoubleBox](false)(using new DoubleBoxDomain()).run()
 
@@ -186,15 +214,15 @@ class LocalizedExampleSimpleAPI[P <: Property[P]](using dom: jppl.Domain[P]):
     val eqs = LocalizedEquationSystems.buildGraphEQS(dom)
     val widening = Combo[P]((x: P, y: P) => y.clone().upperBound(x).widening(x))
     val narrowing = Combo[P]((x: P, y: P) => y.clone().intersection(x))
-    val params = Params[Int, P](
+    val params = Parameters[Int, P](
       solver = Solver.WorkListSolver,
       start = Assignment(dom.createEmpty(2)),
-      combolocation = ComboLocation.Loop,
-      comboscope = ComboScope.Localized,
-      combostrategy = ComboStrategy.TwoPhases,
-      restartstrategy = RestartStrategy.None,
-      wideningComboAssn = ComboAssignment(widening),
-      narrowingComboAssn = ComboAssignment(narrowing),
+      comboLocation = ComboLocation.Loop,
+      comboScope = ComboScope.Localized,
+      comboStrategy = ComboStrategy.TwoPhases,
+      restartStrategy = RestartStrategy.None,
+      widenings = ComboAssignment(widening),
+      narrowings = ComboAssignment(narrowing),
       tracer = FixpointSolverTracer.empty
     )
     val solution = FiniteFixpointSolver(eqs, params)

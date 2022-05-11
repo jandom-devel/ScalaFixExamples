@@ -22,7 +22,7 @@ import it.unich.jppl.*
 import it.unich.scalafix.*
 import it.unich.scalafix.finite.*
 import it.unich.scalafix.graphs.*
-import it.unich.scalafix.lattice.Domain
+import it.unich.scalafix.utils.Domain
 import it.unich.scalafix.utils.Relation
 
 object ReachingDefinitionsExample extends App:

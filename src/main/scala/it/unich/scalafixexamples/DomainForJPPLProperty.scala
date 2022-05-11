@@ -18,25 +18,23 @@
 
 package it.unich.scalafixexamples
 
-import it.unich.jppl
-import it.unich.jppl.*
-import it.unich.scalafix.lattice.Domain
+import it.unich.jppl.Property
+import it.unich.scalafix.utils.Domain
 
-given JPPLDomanIsScalafixDomain[P <: Property[P]](using
-    dom: jppl.Domain[P]
-): Domain[P] with
+given DomainForJPPLProperty[P <: Property[P]]: Domain[P] with
 
   def lteq(x: P, y: P): Boolean = y.contains(x)
 
-  def tryCompare(x: P, y: P): Option[Int] =
-    if y.strictlyContains(x)
-    then Some(1)
-    else if x.strictlyContains(y)
-    then Some(-1)
-    else if x == y
-    then Some(0)
+  override def gteq(x: P, y: P): Boolean = x.contains(y)
+
+  override def lt(x: P, y: P): Boolean = y.strictlyContains(x)
+
+  override def gt(x: P, y: P): Boolean = x.strictlyContains(y)
+
+  override def tryCompare(x: P, y: P): Option[Int] =
+    if y.strictlyContains(x) then Some(1)
+    else if x.strictlyContains(y)then Some(-1)
+    else if x == y then Some(0)
     else None
 
-  extension (x: P)
-    /** It returns an upper bound of `x` and `y`. */
-    infix def upperBound(y: P): P = x.clone().upperBound(y)
+  override def upperBound(x: P, y: P): P = x.clone().upperBound(y)
