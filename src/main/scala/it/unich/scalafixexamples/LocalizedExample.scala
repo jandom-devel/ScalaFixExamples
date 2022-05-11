@@ -205,7 +205,7 @@ object JPPLBoxLocalizedExample extends App:
 object JPPLPolyhedronLocalizedExample extends App:
   LocalizedExample[CPolyhedron](true)(using new CPolyhedronDomain()).run()
 
-class LocalizedExampleSimpleAPI[P <: Property[P]](using dom: jppl.Domain[P]):
+class JPPLSimpleAPIExample[P <: Property[P]](comboScope: ComboScope = ComboScope.Standard, comboStrategy: ComboStrategy = ComboStrategy.TwoPhases)(using dom: jppl.Domain[P]):
   def run() =
     PPL.ioSetVariableOutputFunction({
       case 0 => "i"
@@ -213,24 +213,27 @@ class LocalizedExampleSimpleAPI[P <: Property[P]](using dom: jppl.Domain[P]):
       case i => "x" + i
     })
     val eqs = LocalizedEquationSystems.buildGraphEQS(dom)
-    val widening = Combo[P]((x: P, y: P) => y.clone().upperBound(x).widening(x))
-    val narrowing = Combo[P]((x: P, y: P) => y.clone().intersection(x))
+    val widening = Combo[P]((x, y) => y.clone().upperBound(x).widening(x))
+    val narrowing = Combo[P]((x, y) => y.clone().intersection(x))
     val params = Parameters[Int, P](
       solver = Solver.WorkListSolver,
       start = Assignment(dom.createEmpty(2)),
-      comboLocation = ComboLocation.Loop,
-      comboScope = ComboScope.Localized,
-      comboStrategy = ComboStrategy.TwoPhases,
-      restartStrategy = RestartStrategy.None,
+      comboScope = comboScope,
+      comboStrategy = comboStrategy,
       widenings = ComboAssignment(widening),
-      narrowings = ComboAssignment(narrowing),
-      tracer = FixpointSolverTracer.empty
+      narrowings = ComboAssignment(narrowing)
     )
     val solution = FiniteFixpointSolver(eqs, params)
     println(solution(3))
 
+object JPPLBoxNotLocalizedSimpleAPIExample extends App:
+  JPPLSimpleAPIExample[DoubleBox]()(using new DoubleBoxDomain()).run()
+
 object JPPLBoxLocalizedSimpleAPIExample extends App:
-  LocalizedExampleSimpleAPI[DoubleBox](using new DoubleBoxDomain()).run()
+  JPPLSimpleAPIExample[DoubleBox](comboScope = ComboScope.Localized)(using new DoubleBoxDomain()).run()
+
+object JPPLBoxWarrowingSimpleAPIExample extends App:
+  JPPLSimpleAPIExample[DoubleBox](comboStrategy = ComboStrategy.Warrowing)(using new DoubleBoxDomain()).run()
 
 object JPPLPolyhedronLocalizedSimpleAPIExample extends App:
-  LocalizedExampleSimpleAPI[CPolyhedron](using new CPolyhedronDomain()).run()
+  JPPLSimpleAPIExample[CPolyhedron](comboScope = ComboScope.Localized)(using new CPolyhedronDomain()).run()
