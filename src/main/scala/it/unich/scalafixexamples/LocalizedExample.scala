@@ -185,10 +185,7 @@ class LocalizedExample[P <: Property[P]](localized: Boolean)(using
     val narrowing = Combo[P]((x: P, y: P) => y.clone().intersection(x))
 
     val narrowingAssignment = ComboAssignment(narrowing).restrict(ordering)
-    val eqsWithNarrowing =
-      if localized
-      then eqs.withLocalizedCombos(narrowingAssignment, ordering)
-      else eqs.withCombos(narrowingAssignment)
+    val eqsWithNarrowing = eqs.withCombos(narrowingAssignment)
     val solution =
       WorkListSolver(eqsWithNarrowing)(solutionAscending)
     println(solution(3))
@@ -212,9 +209,15 @@ class JPPLSimpleAPIExample[P <: Property[P]](comboScope: ComboScope = ComboScope
       case 1 => "j"
       case i => "x" + i
     })
+
     val eqs = LocalizedEquationSystems.buildGraphEQS(dom)
     val widening = Combo[P]((x, y) => y.clone().upperBound(x).widening(x))
-    val narrowing = Combo[P]((x, y) => y.clone().intersection(x))
+    val narrowingList = dom.getNarrowings()
+    val narrowing = if narrowingList.isEmpty 
+      then Combo.left[P].delayed(1)
+      else 
+        val pplNarrowing = narrowingList.get(0).getNarrowing()
+        Combo[P]((x, y) => pplNarrowing(y.clone().intersection(x), x))
     val params = Parameters[Int, P](
       solver = Solver.WorkListSolver,
       start = Assignment(dom.createEmpty(2)),
