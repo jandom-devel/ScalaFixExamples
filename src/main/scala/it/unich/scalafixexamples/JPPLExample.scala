@@ -25,7 +25,6 @@ import it.unich.scalafix.finite.*
 import it.unich.scalafix.graphs.*
 import it.unich.scalafix.utils.Domain
 import it.unich.scalafix.utils.Relation
-//import it.unich.scalafixexamples.JPPLDomanIsScalafixDomain ???
 
 object JPPLExampleEquationSystems:
 
