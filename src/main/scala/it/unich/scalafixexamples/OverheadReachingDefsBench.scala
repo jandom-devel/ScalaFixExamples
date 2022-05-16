@@ -36,11 +36,11 @@ class OverheadReachingDefsBench {
       {
         case 1 => Set(1) -- Set(4, 7)
         case 2 => Set(2) ++ (rho(1) -- Set(5))
-        case 3 => Set(3) ++ (rho(2) -- Set())
+        case 3 => Set(3) ++ (rho(2) -- Set(6))
         case 4 => Set(4) ++ (rho(3) ++ rho(7) ++ rho(6) -- Set(1, 7))
         case 5 => Set(5) ++ (rho(4) -- Set(2))
-        case 6 => Set(6) ++ rho(5) -- Set(3)
-        case 7 => Set(6) ++ rho(5) -- Set(1, 4)
+        case 6 => Set(6) ++ (rho(5) -- Set(3))
+        case 7 => Set(7) ++ (rho(5) -- Set(1, 4))
       }
     },
     initialInfl =

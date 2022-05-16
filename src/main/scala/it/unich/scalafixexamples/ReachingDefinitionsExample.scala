@@ -28,12 +28,20 @@ import it.unich.scalafix.utils.Relation
 object ReachingDefinitionsExample extends App:
 
   /** We consider the following program with 7 definitions:
-    *
-    * d1 --> i = m-1; d2 --> j = n; d3 --> a = u1; do d4 --> i = i+1; d5 --> j =
-    * j-1; if (e1) then d6 --> a = u2; else d7 --> i = u3 while (e2)
-    *
+    * ```
+    * d1 --> i = m-1;
+    * d2 --> j = n;
+    * d3 --> a = u1;
+    * do
+    * d4 --> i = i+1;
+    * d5 --> j = j-1;
+    * if (e1) then
+    * d6 --> a = u2;
+    * else
+    * d7 --> i = u3 while (e2)
+    * ```
     * The example comes from: Alfred V. Aho, Ravi Sethi, Jeffrey D. Ullman.
-    * Compilers. Principles, Techniques, and Tools Addison-Wesley Publishing
+    * Compilers. Principles, Techniques, and Tools. Addison-Wesley Publishing
     * Company 1986
     */
 
@@ -41,11 +49,11 @@ object ReachingDefinitionsExample extends App:
     initialBody = (rho: Assignment[Int, Set[Int]]) => {
       case 1 => Set(1) -- Set(4, 7)
       case 2 => Set(2) ++ (rho(1) -- Set(5))
-      case 3 => Set(3) ++ (rho(2) -- Set())
+      case 3 => Set(3) ++ (rho(2) -- Set(6))
       case 4 => Set(4) ++ (rho(3) ++ rho(7) ++ rho(6) -- Set(1, 7))
       case 5 => Set(5) ++ (rho(4) -- Set(2))
-      case 6 => Set(6) ++ rho(5) -- Set(3)
-      case 7 => Set(6) ++ rho(5) -- Set(1, 4)
+      case 6 => Set(6) ++ (rho(5) -- Set(3))
+      case 7 => Set(7) ++ (rho(5) -- Set(1, 4))
     },
     initialInfl =
       Relation(1 -> 2, 2 -> 3, 3 -> 4, 4 -> 5, 5 -> 6, 5 -> 7, 6 -> 4, 7 -> 4),
@@ -75,7 +83,7 @@ object ReachingDefinitionsExampleGraph extends App:
       case "56"   => Set(5)
       case "57"   => Set(5)
     },
-    target = 
+    target =
       case "01"   => 1
       case "12"   => 2
       case "23"   => 3
