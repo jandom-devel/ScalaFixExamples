@@ -173,8 +173,8 @@ class JPPLGraphBasedExample[P <: Property[P]](using dom: jppl.Domain[P]):
       WorkListSolver(simpleEqsWithWidening)(Assignment(dom.createEmpty(1)))
     println(solution)
 
-object JPPLBoxGraphBasedExampleExample extends App:
+object JPPLBoxGraphBasedExample extends App:
   JPPLGraphBasedExample[DoubleBox](using new DoubleBoxDomain()).run()
 
-object JPPLPolyhedronGraphBasedExampleExample extends App:
+object JPPLPolyhedronGraphBasedExample extends App:
   JPPLGraphBasedExample[CPolyhedron](using new CPolyhedronDomain()).run()
