@@ -1,6 +1,6 @@
 FROM fedora:36
 RUN curl -L https://www.scala-sbt.org/sbt-rpm.repo > /etc/yum.repos.d/sbt-rpm.repo && \
-    dnf -y install java-17-openjdk-headless git ppl sbt && \
+    dnf -y install java-17-openjdk-headless git ppl sbt emacs-nox && \
     adduser scalafix
 USER scalafix
 ENTRYPOINT [ "/bin/bash" ]
