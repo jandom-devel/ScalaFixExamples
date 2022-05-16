@@ -1,0 +1,7 @@
+version: "3.9"
+
+services:
+  scalafix-examples:
+    build: .
+    image: scalafix-examples
+    container_name: scalafix-examples
