@@ -52,10 +52,6 @@ object JPPLExampleEquationSystems:
       * ```
       * where the program points [0],[1],[2],[3] are the unknowns of the
       * equation system.
-      *
-      * This example comes from: Gianluca Amato, Francesca Scozzari, Helmut
-      * Seidl, Kalmer Apinis, Vesal Vojdani. Efficiently intertwining widening
-      * and narrowing. Science of Computer Programming, Volume 120, 2016
       */
     FiniteEquationSystem(
       initialBody = (rho: Int => P) => {
