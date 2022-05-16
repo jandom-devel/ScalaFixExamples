@@ -66,7 +66,16 @@ object JPPLExampleEquationSystems:
     )
 
   def buildGraphEQS[P <: Property[P]](using dom: jppl.Domain[P]) =
-
+    /** This is the graph equation system corresponding to the program:
+      * ```
+      *     x=0;
+      * [0] while [1] (x<=10) {
+      * [2]   x=x+1;
+      * [3] }
+      * ```
+      * where the program points [0],[1],[2],[3] are the unknowns of the
+      * equation system.
+      */
     val graphBody = GraphBody[Int, P, String](
       sources = Relation("enter" -> 0, "x<=10" -> 1, "x=x+1" -> 2, "loop" -> 3),
       target =
@@ -96,20 +105,6 @@ object JPPLExampleEquationSystems:
       combiner = _.clone().upperBound(_)
     )
 
-    /** simpleEqs is the equation system corresponding to the program:
-      * ```
-      *     x=0;
-      * [0] while [1] (x<=10) {
-      * [2]   x=x+1;
-      * [3] }
-      * ```
-      * where the program points [0],[1],[2],[3] are the unknowns of the
-      * equation system.
-      *
-      * This example comes from: Gianluca Amato, Francesca Scozzari, Helmut
-      * Seidl, Kalmer Apinis, Vesal Vojdani. Efficiently intertwining widening
-      * and narrowing. Science of Computer Programming, Volume 120, 2016
-      */
     GraphEquationSystem(
       initialGraph = graphBody,
       unknowns = 0 to 3,
