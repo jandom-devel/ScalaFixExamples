@@ -18,8 +18,8 @@ The image comes with some examples on the use of ScalaFix:
 
 The following are the examples presented in the paper
 
-  * [Fibonacci](https://github.com/jandom-devel/ScalaFixExamples/blob/master/src/main/scala/it/unich/scalafixexamples/Fibonacci.scala): this finds the 6th Fibonacci number using an equation system with an infinite number of unkowns (see Section 2.1 in the paper)
-  * [FibonacciFinite](https://github.com/jandom-devel/ScalaFixExamples/blob/master/src/main/scala/it/unich/scalafixexamples/FibonacciFinite.scala): this finds the 6th Fibonacci number using an equation system with an finite number of unkowns (see Section 2.2 in the paper)
+  * [FibonacciExample](https://github.com/jandom-devel/ScalaFixExamples/blob/master/src/main/scala/it/unich/scalafixexamples/FibonacciExample.scala): this finds the 6th Fibonacci number using an equation system with an infinite number of unkowns (see Section 2.1 in the paper)
+  * [FibonacciFiniteExample](https://github.com/jandom-devel/ScalaFixExamples/blob/master/src/main/scala/it/unich/scalafixexamples/FibonacciFiniteExample.scala): this finds the 6th Fibonacci number using an equation system with an finite number of unkowns (see Section 2.2 in the paper)
   * [JPPLBoxExample](https://github.com/jandom-devel/ScalaFixExamples/blob/master/src/main/scala/it/unich/scalafixexamples/JPPLExample.scala): anaysis of a simple program with the box domain (see Section 2.3 in the paper)
   * [JPPLBoxWithWideningExample](https://github.com/jandom-devel/ScalaFixExamples/blob/master/src/main/scala/it/unich/scalafixexamples/JPPLExample.scala): like JPPLBoxExample but with the addition of widenings (see Section 3 in e paper)
   * [JPPLBoxWithWideningAutomaticExample](https://github.com/jandom-devel/ScalaFixExamples/blob/master/src/main/scala/it/unich/scalafixexamples/JPPLExample.scala): like JPPLBoxWithWideningExample but widening points are automatically computed by ScalaFix (see Section 3.1 in the paper)
@@ -37,7 +37,7 @@ The following are new examples not included in the paper:
   [Gianluca Amato, Francesca Scozzari, Helmut Seidl, Kalmer Apinis, Vesal Vojdani. Efficiently intertwining widening and narrowing. Science of Computer Programming, Volume 120, 2016](https://doi.org/10.1016/j.scico.2015.12.005)
   * [InfiniteESWithPriorityExample](https://github.com/jandom-devel/ScalaFixExamples/blob/master/src/main/scala/it/unich/scalafixexamples/InfiniteESExample.scala): like InfiniteESExample but using the priority worklist solver.
   * [ReachingDefinitionsExample](https://github.com/jandom-devel/ScalaFixExamples/blob/master/src/main/scala/it/unich/scalafixexamples/ReachingDefinitionsExample.scala): an example of reaching definition analysis taken from the dragon book.
-  * [ReachingDefinitionsExampleGraph](https://github.com/jandom-devel/ScalaFixExamples/blob/master/src/main/scala/it/unich/scalafixexamples/ReachingDefinitionsExample.scala): an example of reaching definition analysis taken from the dragon book implemented using a graph-based equation system.
+  * [ReachingDefinitionsGraphExample](https://github.com/jandom-devel/ScalaFixExamples/blob/master/src/main/scala/it/unich/scalafixexamples/ReachingDefinitionsExample.scala): an example of reaching definition analysis taken from the dragon book implemented using a graph-based equation system.
 
 ## Benchmarks
 
@@ -58,6 +58,4 @@ The directory `/home/scalafix/ScalaFix` contains a copy of the Scalafix source c
   * `/home/scalafix/ScalaFix/core/src/test/scala/it/unich/scalafix/` contains the unit tests;
   * `/home/scalafix/ScalaFix/bench/src/main/scala/it/unich/scalafix/jmh/` contains benchmarks.
 
-You can run the benchmark with `sbt bench/Jmh/run <classname>` and the unit tests with `sbt test` from the
-`/home/scalafix/ScalaFix` folder.
-
+From the `/home/scalafix/ScalaFix` directory you can run  the unit tests with `sbt test` and the benchmarks with `sbt bench/Jmh/run <classname>`.
