@@ -22,7 +22,7 @@ import it.unich.scalafix.{finite, *}
 import it.unich.scalafix.finite.*
 import it.unich.scalafix.utils.Relation
 
-object FibonacciFinite extends App:
+object FibonacciFiniteExample extends App:
 
   finiteFibo
 

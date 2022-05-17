@@ -63,7 +63,7 @@ object ReachingDefinitionsExample extends App:
   val sol = finite.WorkListSolver(eqs)(Assignment(Set.empty[Int]))
   println(sol)
 
-object ReachingDefinitionsExampleGraph extends App:
+object ReachingDefinitionsGraphExample extends App:
 
   val graph = GraphBody[Int, Set[Int], String](
     edgeAction = (rho: Assignment[Int, Set[Int]]) =>

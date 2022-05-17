@@ -21,7 +21,7 @@ package it.unich.scalafixexamples
 import it.unich.scalafix.*
 import it.unich.scalafix.infinite
 
-object Fibonacci extends App:
+object FibonacciExample extends App:
 
   infiniteFibo
 
