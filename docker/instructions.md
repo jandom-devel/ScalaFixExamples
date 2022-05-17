@@ -1,17 +1,17 @@
 # Instructions for the ScalaFix artifacts
 
 The artifact is made available as a Docker image `scalafix-examples.tgz`. Load this image in your
-Docker environment with `docker load scalafix-examples.tgz`. Then, you can create a container and 
-run it with `docker run -it scalafix-examples`.
+Docker environment with `docker load -i scalafix-examples.tgz` . Then, you can create a container and 
+run it with `docker run -it scalafix-examples` .
 
 The image `scalafix-examples` contains an installation of Fedora 36 with Scalafix and all its
 dependencies. Once started, the bash shell is executed as the user `scalafix` in the working directory
 `/home/scalafix/ScalafixExamples`. This directory contains the source code of the ScalaFix examples.
-In particular, according to standard convention in the Scala world, the source code is in `/home/scalafix/ScalafixExamples/src/main/it/unich/scalafixexamples`. Some of these examples are taken from the paper, others are new.
+In particular, according to standard convention in the Scala world, the source code is in `/home/scalafix/ScalafixExamples/src/main/scala/it/unich/scalafixexamples`. Some of these examples are taken from the paper, others are new.
 
 ## Examples
 
-The image comes with a few examples on the use of ScalaFix:
+The image comes with some examples on the use of ScalaFix:
 
 * Launch the examples with the command `sbt run` (`sbt` is the Scala Build Tool, the standard build system for Scala).
 * Choose the number of the example you want to run. These examples are not particularly significative without looking at the source code. It is possible to browse the source code with either the `emacs` or `vi` text editors, or directly from the GitHub repositories: https://github.com/jandom-devel/ScalaFix for  ScalaFix and https://github.com/jandom-devel/ScalaFixExamples for ScalaFixExamples.
