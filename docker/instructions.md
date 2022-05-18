@@ -1,4 +1,4 @@
-# Instructions for the ScalaFix artifacts
+# Instructions for the ScalaFix artifact
 
 The artifact is made available as a Docker image `scalafix-examples.tgz`. Load this image in your
 Docker environment with `docker load -i scalafix-examples.tgz` . Then, you can create a container and 
@@ -75,4 +75,6 @@ The directory `/home/scalafix/ScalaFix` contains a copy of the Scalafix source c
 
 From the `/home/scalafix/ScalaFix` directory you can run the ScalaFix unit tests with `sbt` and, from the SBT prompt `sbt:scalafix>` , give the command `test` (note that this SBT prompt is different from the previous one since you must be in the `/home/scalafix/ScalaFix` directory). From the same SBT prompt you can execute the benchmarks with `bench/Jmh/run` (it takes about 33 minutes).
 
-The Dockerfile which generates the current image is available in `/home/scalafix/ScalaFixExamples/docker`.
+The Dockerfile which generates the current image is available in:
+
+`/home/scalafix/ScalaFixExamples/docker`.
