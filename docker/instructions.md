@@ -7,13 +7,13 @@ run it with `docker run -it scalafix-examples` .
 The image `scalafix-examples` contains an installation of Fedora 36 with Scalafix and all its
 dependencies. Once started, the bash shell is executed as the user `scalafix` in the working directory
 `/home/scalafix/ScalaFixExamples`. This directory contains the source code of the ScalaFix examples.
-In particular, according to standard convention in the Scala world, the source code is in `/home/scalafix/ScalaFixExamples/src/main/scala/it/unich/scalafixexamples`. Some of these examples are taken from the paper, others are new.
+In particular, according to the standard convention in the Scala world, the source code is in `/home/scalafix/ScalaFixExamples/src/main/scala/it/unich/scalafixexamples`. Some of these examples are taken from the paper, others are new.
 
 ## Examples
 
 The image comes with some examples on the use of ScalaFix which can be executed using `sbt` - Scala Build Tool - the standard build system for Scala.
 
-* Launch the Scala Build Tool with the command `sbt`  from the directory `/home/scalafix/ScalaFixExamples` . You will see the SBT prompt `sbt:ScalaFixExamples>` from which you can give the dommanda `run` .
+* Launch the Scala Build Tool with the command `sbt`  from the directory `/home/scalafix/ScalaFixExamples` . You will see the SBT prompt `sbt:ScalaFixExamples>` from which you can give the command `run` .
 * Choose the number of the example you want to run. These examples are not particularly significative without looking at the source code. It is possible to browse the source code with either the `emacs` or `vi` text editors, or directly from the GitHub repositories: https://github.com/jandom-devel/ScalaFix for  ScalaFix and https://github.com/jandom-devel/ScalaFixExamples for ScalaFixExamples.
 
 The following are the examples presented in the paper
@@ -42,7 +42,7 @@ The following are new examples not included in the paper:
 ## Benchmarks
 
 Benchmarks may be run from the SBT prompt with `Jmh/run` . Since this executes all the benchmarks, it takes a lot of time (about 45 minutes).
-It is possible to execute the single benchmark with `Jmh/run <classname>` where `<classname>` may be:
+It is possible to execute a single benchmark with `Jmh/run <classname>` where `<classname>` may be:
  
   * [OverheadIntBench](https://github.com/jandom-devel/ScalaFixExamples/blob/master/src/main/scala/it/unich/scalafixexamples/OverheadIntBench.scala) Benchmarks the equation system (1) in Section 6 with different solver, usign both ScalaFix and ad-hoc solvers. It takes about 16 minutes.
   * [OverheadBoxBench](https://github.com/jandom-devel/ScalaFixExamples/blob/master/src/main/scala/it/unich/scalafixexamples/OverheadBoxBench.scala) Benchmarks the equation system (2) in Section 6 with different solver, using both ScalaFix and ad-hoc solvers.  It takes about 8 minutes.
