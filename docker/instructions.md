@@ -11,9 +11,9 @@ In particular, according to standard convention in the Scala world, the source c
 
 ## Examples
 
-The image comes with some examples on the use of ScalaFix:
+The image comes with some examples on the use of ScalaFix which can be executed using `sbt` - Scala Build Tool - the standard build system for Scala.
 
-* Launch the examples with the command `sbt run` (`sbt` is the Scala Build Tool, the standard build system for Scala) from the directory `/home/scalafix/ScalaFixExamples` .
+* Launch the Scala Build Tool with the command `sbt`  from the directory `/home/scalafix/ScalaFixExamples` . You will see the SBT prompt `sbt:ScalaFixExamples>` from which you can give the dommanda `run` .
 * Choose the number of the example you want to run. These examples are not particularly significative without looking at the source code. It is possible to browse the source code with either the `emacs` or `vi` text editors, or directly from the GitHub repositories: https://github.com/jandom-devel/ScalaFix for  ScalaFix and https://github.com/jandom-devel/ScalaFixExamples for ScalaFixExamples.
 
 The following are the examples presented in the paper
@@ -41,16 +41,29 @@ The following are new examples not included in the paper:
 
 ## Benchmarks
 
-Benchmarks may be run with `sbt Jmh/run` from the directory `/home/scalafix/ScalaFixExamples` . Since this executes all the benchmarks, it takes a lot of time.
-It is possible to execute the single benchmark with `sbt Jmh/run <classname>` where `<classname>` may be:
+Benchmarks may be run from the SBT prompt with `Jmh/run` . Since this executes all the benchmarks, it takes a lot of time (about 45 minutes).
+It is possible to execute the single benchmark with `Jmh/run <classname>` where `<classname>` may be:
  
-  * [OverheadIntBench](https://github.com/jandom-devel/ScalaFixExamples/blob/master/src/main/scala/it/unich/scalafixexamples/OverheadIntBench.scala) Benchmarks the equation system (1) in Section 6 with different solver, usign both ScalaFix and ad-hoc solvers.
-  * [OverheadBoxBench](https://github.com/jandom-devel/ScalaFixExamples/blob/master/src/main/scala/it/unich/scalafixexamples/OverheadBoxBench.scala) Benchmarks the equation system (2) in Section 6 with different solver, using both ScalaFix and ad-hoc solvers.
-  * [OverheadReachingDefsBench](https://github.com/jandom-devel/ScalaFixExamples/blob/master/src/main/scala/it/unich/scalafixexamples/OverheadReachingDefsBench.scala) Benchmakrs the equation system in the `ReachingDefinitionsExample` using both ScalaFix and ad-hoc solvers.
+  * [OverheadIntBench](https://github.com/jandom-devel/ScalaFixExamples/blob/master/src/main/scala/it/unich/scalafixexamples/OverheadIntBench.scala) Benchmarks the equation system (1) in Section 6 with different solver, usign both ScalaFix and ad-hoc solvers. It takes about 16 minutes.
+  * [OverheadBoxBench](https://github.com/jandom-devel/ScalaFixExamples/blob/master/src/main/scala/it/unich/scalafixexamples/OverheadBoxBench.scala) Benchmarks the equation system (2) in Section 6 with different solver, using both ScalaFix and ad-hoc solvers.  It takes about 8 minutes.
+  * [OverheadReachingDefsBench](https://github.com/jandom-devel/ScalaFixExamples/blob/master/src/main/scala/it/unich/scalafixexamples/OverheadReachingDefsBench.scala) Benchmakrs the equation system in the `ReachingDefinitionsExample` using both ScalaFix and ad-hoc solvers. It takes about 20 minutes.
 
-## Other
+## Modify the examples
+You may modify the examples using either the `emacs` or `vi` text editors and run them. For instance, to modify the FibonacciExample you can edit the code, from the directory `/home/scalafix/ScalaFixExamples` with:
 
-The Dockerfile which generates the current image is available in `/home/scalafix/ScalaFixExamples/docker`.
+`emacs src/main/scala/it/unich/scalafixexamples/Fibonacci.scala`
+
+Now you can modify the line of code:
+
+`val sol = infinite.WorkListSolver(eqs)(Assignment(1), Set(6))`
+
+which computes the 6th number of Fibonacci with:
+
+`val sol = infinite.WorkListSolver(eqs)(Assignment(1), Set(42))`
+
+to compute the 42nd number of Fibonacci. Then give the commands `sbt` and `run` and choose the example `it.unich.scalafixexamples.Fibonacci`.
+
+## Source code
 
 The directory `/home/scalafix/ScalaFix` contains a copy of the Scalafix source code. In particular:
 
@@ -58,4 +71,8 @@ The directory `/home/scalafix/ScalaFix` contains a copy of the Scalafix source c
   * `/home/scalafix/ScalaFix/core/src/test/scala/it/unich/scalafix/` contains the unit tests;
   * `/home/scalafix/ScalaFix/bench/src/main/scala/it/unich/scalafix/jmh/` contains benchmarks.
 
-From the `/home/scalafix/ScalaFix` directory you can run  the unit tests with `sbt test` and the benchmarks with `sbt bench/Jmh/run <classname>`.
+## Other
+
+From the `/home/scalafix/ScalaFix` directory you can run the ScalaFix unit tests with `sbt` and, from the SBT prompt `sbt:scalafix>` , give the command `test` (note that this SBT prompt is different from the previous one since you must be in the `/home/scalafix/ScalaFix` directory). From the same SBT prompt you can execute the benchmarks with `bench/Jmh/run` (it takes about 33 minutes).
+
+The Dockerfile which generates the current image is available in `/home/scalafix/ScalaFixExamples/docker`.
