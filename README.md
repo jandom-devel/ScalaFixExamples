@@ -26,10 +26,7 @@ If the PPL is not available as a package, you can download the source code and c
 
 In order to compile and execute the examples, you need the [Scala Build Tool](https://www.scala-sbt.org/) (SBT) installed in your computer. Then, launching the `sbt` command inside the root directory of the repository (the folder containing the `build.sbt` file) will execute the interactive build tool, from where you can:
 
-  * execute benchmarks with the command `Jmh/run` . Since this executes all the benchmarks, it takes a lot of time (about 45 minutes). It is possible to execute a single benchmark with `Jmh/run <classname>` where `<classname>` may be:
-    * [OverheadIntBench](https://github.com/jandom-devel/ScalaFixExamples/blob/master/src/main/scala/it/unich/scalafixexamples/OverheadIntBench.scala)) Benchmarks the equation system (1) in Section 6 with different solver, using both ScalaFix and ad-hoc solvers. It takes about 16 minutes.
-    * [OverheadBoxBench](https://github.com/jandom-devel/ScalaFixExamples/blob/master/src/main/scala/it/unich/scalafixexamples/OverheadBoxBench.scala)) Benchmarks the equation system (2) in Section 6 with different solver, using both ScalaFix and ad-hoc solvers.  It takes about 8 minutes.
-    * [OverheadReachingDefsBench](https://github.com/jandom-devel/ScalaFixExamples/blob/master/src/main/scala/it/unich/scalafixexamples/OverheadReachingDefsBench.scala)) Benchmarks the equation system in the `ReachingDefinitionsExample` using both ScalaFix and ad-hoc solvers. It takes about 20 minutes.
+  * execute benchmarks with the command `Jmh/run` (it takes about 45 minutes).
   * execute examples by giving the command `run ` and choosing the number of the example you want.
 
 ## Docker
