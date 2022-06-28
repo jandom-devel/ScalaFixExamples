@@ -9,11 +9,11 @@ This is a set of examples for the [ScalaFix](https://github.com/jandom-devel/Sca
    * [JPPL](https://github.com/jandom-devel/JPPL), Java bindings for the [Parma Polyhedra Library](http://bugseng.com/products/ppl/) (`PPL`);
    * [JGMP](https://github.com/jandom-devel/JGMP), Java bindings for the [GNU Multiple Precision Arithmetic Library](https://gmplib.org/) (`GMP`);
 
-These dependencies are automatically fetched from the Maven repositories by the build tool. Unfortunately, both `JPPL` and `JGMP` depends on native C libraries. If these libraries are missing, any attempt to execute an example or benchmarks using the `PPL` will fail. Instructions for installing these are libraries are system dependent.
+These dependencies are automatically fetched from the Maven repositories by the build tool. Unfortunately, both `JPPL` and `JGMP` depends on native C libraries. If these libraries are missing, any attempt to execute an example or a benchmark using the `PPL` will fail. Instructions for installing these libraries are system dependent.
 
 ### Linux
 
-The simplest way to install `PPL` and `GMP` is through the package available in most of the standard Linux distributions. In particular:
+The simplest way to install `PPL` and `GMP` is through the packages available in most of the standard Linux distributions. In particular:
   * Debian and derivatives, such as Ubuntu: install the `libppl-c4` package;
   * Fedora: install the `ppl` package;
   * Arch Linux: install the `ppl` package.
@@ -24,7 +24,7 @@ If the PPL is not available as a package, you can download the source code and c
 
 ## Executing examples and benchmarks
 
-In order to compile and execute the examples, you need the [Scala Build Tool](https://www.scala-sbt.org/) (SBT) installed in your computer. Then, launching the `sbt` command inside the root directory of the repository (the one containing the `build.sbt` file) will execute the interactive build tool where you can:
+In order to compile and execute the examples, you need the [Scala Build Tool](https://www.scala-sbt.org/) (SBT) installed in your computer. Then, launching the `sbt` command inside the root directory of the repository (the folder containing the `build.sbt` file) will execute the interactive build tool where you can:
 
   * execute benchmarks with the command `Jmh/run` . Since this executes all the benchmarks, it takes a lot of time (about 45 minutes). It is possible to execute a single benchmark with `Jmh/run <classname>` where `<classname>` may be:
     * [OverheadIntBench](https://github.com/jandom-devel/ScalaFixExamples/blob/master/src/main/scala/it/unich/scalafixexamples/OverheadIntBench.scala) Benchmarks the equation system (1) in Section 6 with different solver, usign both ScalaFix and ad-hoc solvers. It takes about 16 minutes.
@@ -34,7 +34,7 @@ In order to compile and execute the examples, you need the [Scala Build Tool](ht
 
 ## Docker
 
-In the `docker` directory you may find the recipes to build a docker image with `ScalaFixExamples` and the relevant libraries. Just execute `docker-compose up` inside the docker directory in a system where Docker and `docker-compose` are installed. Note that, due to [this issue](https://github.com/moby/moby/commit/9f6b562dd12ef7b1f9e2f8e6f2ab6477790a6594) a recent version of docker is required (don't know exactly which ones work, but 20.10.16 are laters should be fine).
+In the `docker` directory you may find the recipes to build a docker image with `ScalaFixExamples` and the relevant libraries. Just execute `docker-compose up` inside the docker directory in a system where Docker and `docker-compose` are installed. Note that, due to [this issue](https://github.com/moby/moby/commit/9f6b562dd12ef7b1f9e2f8e6f2ab6477790a6594), a recent version of docker is required (20.10.16 and laters should be fine).
 
 ## Accessing ScalaFix source code
 
