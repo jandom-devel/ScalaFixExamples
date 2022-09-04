@@ -28,7 +28,7 @@ import it.unich.scalafix.utils.Relation
 object ReachingDefinitionsExample extends App:
 
   /** This object contains many implementations of an equation system for reaching
-    * definition analisys of the following three-address code program with 7 definitions:
+    * definition analysis of the following three-address code program with 7 definitions:
     * ```
     * d1 --> i = m-1;
     * d2 --> j = n;
