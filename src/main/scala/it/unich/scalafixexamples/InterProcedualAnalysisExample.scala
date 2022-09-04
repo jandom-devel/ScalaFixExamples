@@ -52,6 +52,13 @@ class InterProcedualAnalysisExample[P <: Property[P]](dom: Domain[P]):
         widen_data(u.pp) = vnew
         U(u.pp, vnew)
 
+  /** the function is: 
+  * incr(x) = x+1
+  * the program is:
+  * x=y=0 
+  * p0 y=incr(x)
+  * p1 y=incr(y) p2  
+  */
   val initialBody: Body[U, P] = (rho: U => P) =>
     case U("incr_start", i) =>
       i
@@ -81,7 +88,10 @@ class InterProcedualAnalysisExample[P <: Property[P]](dom: Domain[P]):
 
   def run() =
     val wanted = Seq(U("p2", dom.createEmpty(0)))
-    PPL.ioSetVariableOutputFunction((i: Long) => "x" + i)
+    PPL.ioSetVariableOutputFunction({ 
+      case 0 => "x"
+      case 1 => "y"
+      case i => "x" + i})
     val solution = infinite.WorkListSolver(eqs)(initialAssignment, wanted)
     for (pp <- wanted) {
       println(s"${pp} -> ${solution(pp)}")
