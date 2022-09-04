@@ -27,22 +27,24 @@ import it.unich.scalafix.utils.Relation
 
 object ReachingDefinitionsExample extends App:
 
-  /** We consider the following program with 7 definitions:
+  /** This object contains many implementations of an equation system for reaching
+    * definition analisys of the following three-address code program with 7 definitions:
     * ```
     * d1 --> i = m-1;
     * d2 --> j = n;
     * d3 --> a = u1;
     * do
-    * d4 --> i = i+1;
-    * d5 --> j = j-1;
-    * if (e1) then
-    * d6 --> a = u2;
-    * else
-    * d7 --> i = u3 while (e2)
+    *   d4 --> i = i+1;
+    *   d5 --> j = j-1;
+    *   if (e1) then
+    *     d6 --> a = u2;
+    *   else
+    *   d7 --> i = u3 
+    * while (e2)
     * ```
-    * The example comes from: Alfred V. Aho, Ravi Sethi, Jeffrey D. Ullman.
-    * Compilers. Principles, Techniques, and Tools. Addison-Wesley Publishing
-    * Company 1986
+    * The example comes from: <blockquote> Alfred V. Aho, Ravi Sethi, Jeffrey D.
+    * Ullman.<br> <em>Compilers. Principles, Techniques, and Tools</em><br>
+    * Addison-Wesley Publishing Company, 1986 </blockquote>
     */
 
   var eqs = finite.FiniteEquationSystem(
@@ -50,7 +52,7 @@ object ReachingDefinitionsExample extends App:
       case 1 => Set(1) -- Set(4, 7)
       case 2 => Set(2) ++ (rho(1) -- Set(5))
       case 3 => Set(3) ++ (rho(2) -- Set(6))
-      case 4 => Set(4) ++ (rho(3) ++ rho(7) ++ rho(6) -- Set(1, 7))
+      case 4 => Set(4) ++ (rho(3) ++ rho(6) ++ rho(7) -- Set(1, 7))
       case 5 => Set(5) ++ (rho(4) -- Set(2))
       case 6 => Set(6) ++ (rho(5) -- Set(3))
       case 7 => Set(7) ++ (rho(5) -- Set(1, 4))
@@ -69,11 +71,11 @@ object ReachingDefinitionsGraphExample extends App:
     edgeAction = (rho: Assignment[Int, Set[Int]]) =>
       case "01"   => Set(1) ++ (rho(0) -- Set(4, 7))
       case "12"   => Set(2) ++ (rho(1) -- Set(5))
-      case "23"   => Set(3) ++ (rho(2) -- Set())
+      case "23"   => Set(3) ++ (rho(2) -- Set(6))
       case "3674" => Set(4) ++ (rho(3) ++ rho(6) ++ rho(7) -- Set(1, 7))
       case "45"   => Set(5) ++ (rho(4) -- Set(2))
-      case "56"   => Set(6) ++ rho(5) -- Set(3)
-      case "57"   => Set(6) ++ rho(5) -- Set(1, 4),
+      case "56"   => Set(6) ++ (rho(5) -- Set(3))
+      case "57"   => Set(7) ++ (rho(5) -- Set(1, 4)),
     sources = Relation {
       case "01"   => Set(0)
       case "12"   => Set(1)
