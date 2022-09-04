@@ -90,12 +90,12 @@ class OverheadBoxBench:
       inputUnknowns = Set()
     )
     val combo =
-      Combo({ (x: DoubleBox, y: DoubleBox) => y.clone().upperBound(x) }, true)
+      Combo({ (x: DoubleBox, y: DoubleBox) => y.clone().upperBound(x).widening(x) }, true)
     val combos = ComboAssignment(combo)
     val eqs2 = eqs.withCombos(combos)
     RoundRobinSolver(eqs2)(Assignment(box0))  
 
-  def hashMap(withCombos: Boolean, withInlineBody: Boolean) =
+  def hashMap(withCombos: Boolean) =
     var rho = mutable.Map[Int, DoubleBox]().withDefaultValue(box0)
     var dirty = true
     var i = 0
@@ -104,16 +104,10 @@ class OverheadBoxBench:
       i = 0
       while i < length do
         val v = rho(i)
-        val vtmp =
-          if withInlineBody
-          then
-            if i == 0
-            then rho(length - 1).clone().refineWith(refineConstr)
-            else rho(i - 1).clone().affineImage(0, incrExpr)
-          else body(rho)(i)
+        val vtmp = body(rho)(i)
         var vnew =
           if withCombos
-          then vtmp.clone().upperBound(v)
+          then vtmp.clone().upperBound(v).widening(v)
           else vtmp
         if v != vnew then
           rho(i) = vnew
@@ -122,12 +116,12 @@ class OverheadBoxBench:
     rho
 
   @Benchmark
-  def hashMapNotInlined() = hashMap(false, false)
+  def hashMapWithoutCombos() = hashMap(false)
 
   @Benchmark
-  def hashMapInlined() = hashMap(false, true)
+  def hashMapWithCombos() = hashMap(true)
 
-  def array(withCombos: Boolean, withInlineBody: Boolean) =
+  def array(withCombos: Boolean) =
     var rho = Array.fill(length)(box0)
     var dirty = true
     var i = 0
@@ -136,17 +130,10 @@ class OverheadBoxBench:
       i = 0
       while i < length do
         val v = rho(i)
-        val vtmp =
-          if withInlineBody
-          then
-            if i == 0
-            then rho(length - 1).clone().refineWith(refineConstr)
-            else
-              rho(i - 1).clone().affineImage(0, incrExpr).upperBound(rho(i - 1))
-          else body(rho)(i)
+        val vtmp = body(rho)(i)
         var vnew =
           if withCombos
-          then vtmp.clone().upperBound(v)
+          then vtmp.clone().upperBound(v).widening(v)
           else vtmp
         if v != vnew then
           rho(i) = vnew
@@ -155,7 +142,7 @@ class OverheadBoxBench:
     rho
 
   @Benchmark
-  def arrayNotInlined() = array(false, false)
+  def arrayWithoutCombos() = array(false)
 
   @Benchmark
-  def arrayInlined() = array(false, true)
+  def arrayWithCombos() = array(true)
