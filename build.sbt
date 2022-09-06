@@ -5,12 +5,9 @@ ThisBuild / version          := "0.1.0-SNAPSHOT"
 ThisBuild / organization     := "it.unich.scalafixexamples"
 ThisBuild / organizationName := "it.unich"
 
-ThisBuild / resolvers ++= Seq (
-  Resolver.sonatypeRepo("releases"),
-  Resolver.sonatypeRepo("snapshots"),
-  "s01sonatype-snapshot-repo" at "https://s01.oss.sonatype.org/content/repositories/snapshots/",
-  Resolver.mavenLocal
-)
+ThisBuild / resolvers ++= Resolver.sonatypeOssRepos("releases")
+ThisBuild / resolvers ++= Resolver.sonatypeOssRepos("snapshots")
+ThisBuild / resolvers ++= Seq(Resolver.mavenLocal)
 
 ThisBuild / scalacOptions ++= Seq(
   "-deprecation",
