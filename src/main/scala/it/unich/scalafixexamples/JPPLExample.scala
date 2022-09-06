@@ -102,12 +102,12 @@ object JPPLExampleEquationSystems:
           case "loop" => rho(3)
         }
       },
-      combiner = _.clone().upperBound(_)
+      combiner = _.clone().upperBound(_),
+      unknowns = 0 to 3
     )
 
     GraphEquationSystem(
       initialGraph = graphBody,
-      unknowns = 0 to 3,
       inputUnknowns = Set(0)
     )
 

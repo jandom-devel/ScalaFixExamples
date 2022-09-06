@@ -114,11 +114,11 @@ object ReachingDefinitionsGraphExample extends App:
       case 6 => Set("56")
       case 7 => Set("57")
     },
-    combiner = _ ++ _
+    combiner = _ ++ _,
+    unknowns = 0 to 7
   )
   var eqs = GraphEquationSystem(
     initialGraph = graph,
-    unknowns = 0 to 7,
     inputUnknowns = Set(0)
   )
 

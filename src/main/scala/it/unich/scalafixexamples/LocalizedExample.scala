@@ -152,12 +152,12 @@ object LocalizedEquationSystems:
           case "i=i+1"       => rho(7).clone().affineImage(0, LinearExpression.of(1, 1, 0))
         }
       },
-      combiner = { _.clone().upperBound(_) }
+      combiner = { _.clone().upperBound(_) },
+      unknowns = 0 to 9
     )
 
     GraphEquationSystem(
       initialGraph = graphBody,
-      unknowns = 0 to 9,
       inputUnknowns = Set(0)
     )
 
