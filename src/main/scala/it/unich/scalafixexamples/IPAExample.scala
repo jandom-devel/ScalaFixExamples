@@ -122,7 +122,7 @@ class InterProcedualAnalysisExample[P <: Property[P]](
     for (pp <- wanted)
       println(s"${pp} -> ${solution(pp)}")    
     println("\nComplete result:")
-    println(solution)
+    println(solution.toSeq.sortBy(_._1.toString).map( p => s"${p._1} -> ${p._2}").mkString("", "\n", ""))
 
 object IPAExampleNoWidening extends App:
   InterProcedualAnalysisExample(DoubleBoxDomain(), NoContextWidening()).run()
