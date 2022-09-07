@@ -1,7 +1,7 @@
 //updateOptions := updateOptions.value.withLatestSnapshots(true)
 
 ThisBuild / scalaVersion     := "3.1.3"
-ThisBuild / version          := "0.1.0-SNAPSHOT"
+ThisBuild / version          := "0.1.1-SNAPSHOT"
 ThisBuild / organization     := "it.unich.scalafixexamples"
 ThisBuild / organizationName := "it.unich"
 
