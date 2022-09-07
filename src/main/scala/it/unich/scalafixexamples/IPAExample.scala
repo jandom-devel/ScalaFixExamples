@@ -24,28 +24,26 @@ import it.unich.scalafix.infinite
 
 import scala.collection.mutable
 
-/**
-  * Class used for labels of program points.
-  * @param pp a string for the program point
-  * @param context an abstract object containing the calling context (actual parameters)
+/** Class used for labels of program points.
+  * @param pp
+  *   a string for the program point
+  * @param context
+  *   an abstract object containing the calling context (actual parameters)
   */
 case class U[P <: Property[P]](pp: String, context: P):
-  override def hashCode(): Int = 3*pp.hashCode + context.toString.hashCode
+  override def hashCode(): Int = 3 * pp.hashCode + context.toString.hashCode
 
-/**
-  * Interface for widening of contexts in function calls.
+/** Interface for widening of contexts in function calls.
   */
 trait ContextWidening[P <: Property[P]]:
   def apply(u: U[P]): U[P]
 
-/**
-  * A widening which does nothing.
-  */  
+/** A widening which does nothing.
+  */
 class NoContextWidening[P <: Property[P]] extends ContextWidening[P]:
   def apply(u: U[P]) = u
 
-/**
-  * A widening which only keeps a single context for each function call.
+/** A widening which only keeps a single context for each function call.
   */
 class SingleContextWidening[P <: Property[P]] extends ContextWidening[P]:
   val widen_data = mutable.Map.empty[String, P]
@@ -60,14 +58,18 @@ class SingleContextWidening[P <: Property[P]] extends ContextWidening[P]:
         val vnew = v.upperBound(u.context).widening(u.context)
         widen_data(u.pp) = vnew
         U(u.pp, vnew)
-  
-/**
-  * An example of inter-procedeural analysis.
+
+/** An example of inter-procedeural analysis.
   *
-  * @param dom domain for the analysis
-  * @param widen widening for contexts
+  * @param dom
+  *   domain for the analysis
+  * @param widen
+  *   widening for contexts
   */
-class InterProcedualAnalysisExample[P <: Property[P]](dom: Domain[P], widen: ContextWidening[P]):
+class InterProcedualAnalysisExample[P <: Property[P]](
+    dom: Domain[P],
+    widen: ContextWidening[P]
+):
 
   // the linear expression x+1
   val xplus1 = LinearExpression.of(1, 1)
@@ -78,13 +80,10 @@ class InterProcedualAnalysisExample[P <: Property[P]](dom: Domain[P], widen: Con
     Constraint.of(LinearExpression.of(0, 0, 1), Constraint.ConstraintType.EQUAL)
   )
 
-  /** the function is: 
-  * incr(x) = x+1
-  * the program is:
-  * x=y=0 
-  * p0 y=incr(x)
-  * p1 y=incr(y) p2  
-  */
+  /*
+   * the function is: incr(x) = x+1 the program is: x=y=0 p0 y=incr(x) p1
+   * y=incr(y) p2
+   */
   val initialBody: Body[U[P], P] = (rho: U[P] => P) =>
     case U("incr_start", i) =>
       i
@@ -109,19 +108,19 @@ class InterProcedualAnalysisExample[P <: Property[P]](dom: Domain[P], widen: Con
 
   val initialAssignment: Assignment[U[P], P] =
     case U("incr_start", _) => dom.createEmpty(1)
-    case U("incr_end", _) => dom.createEmpty(1)
-    case _ => dom.createEmpty(2)
+    case U("incr_end", _)   => dom.createEmpty(1)
+    case _                  => dom.createEmpty(2)
 
   def run() =
     val wanted = Seq(U("p2", dom.createEmpty(0)))
-    PPL.ioSetVariableOutputFunction({ 
+    PPL.ioSetVariableOutputFunction({
       case 0 => "x"
       case 1 => "y"
-      case i => "x" + i})
+      case i => "x" + i
+    })
     val solution = infinite.WorkListSolver(eqs)(initialAssignment, wanted)
-    for (pp <- wanted) {
-      println(s"${pp} -> ${solution(pp)}")
-    }
+    for (pp <- wanted)
+      println(s"${pp} -> ${solution(pp)}")    
     println("\nComplete result:")
     println(solution)
 
@@ -129,4 +128,5 @@ object IPAExampleNoWidening extends App:
   InterProcedualAnalysisExample(DoubleBoxDomain(), NoContextWidening()).run()
 
 object IPAExampleWidening extends App:
-  InterProcedualAnalysisExample(DoubleBoxDomain(), SingleContextWidening()).run()
+  InterProcedualAnalysisExample(DoubleBoxDomain(), SingleContextWidening())
+    .run()
