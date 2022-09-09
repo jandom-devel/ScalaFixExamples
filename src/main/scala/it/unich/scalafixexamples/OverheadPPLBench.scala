@@ -22,19 +22,18 @@ import it.unich.jppl.*
 import it.unich.scalafix.*
 import it.unich.scalafix.finite.*
 import it.unich.scalafix.utils.Relation
+
 import org.openjdk.jmh.annotations.*
 import scala.collection.mutable
+import scala.reflect.ClassTag
 
-@State(Scope.Benchmark)
-@Warmup(iterations = 3)
-@Fork(value = 1)
-class OverheadBoxBench:
+class OverheadPPLBenchSolvers[P <: Property[P] : ClassTag](dom: Domain[P]):
 
-  val length = 200
+  val length = 100
   val limit = 2000
   val body = chainEquation(length)
 
-  val box0 = DoubleBox.from(
+  val poly0 = dom.createFrom(
     ConstraintSystem.of(
       Constraint.of(LinearExpression.of(0, 1), Constraint.ConstraintType.EQUAL)
     )
@@ -45,21 +44,21 @@ class OverheadBoxBench:
     Constraint.ConstraintType.LESS_OR_EQUAL
   )
 
-  def chainEquation(length: Int): Body[Int, DoubleBox] =
-    (rho: Int => DoubleBox) =>
+  def chainEquation(length: Int): Body[Int, P] =
+    (rho: Int => P) =>
       (u: Int) =>
         if u == 0
-        then rho(length - 1).clone().refineWith(refineConstr)
-        else rho(u - 1).clone().affineImage(0, incrExpr).upperBound(rho(u - 1))
+        then rho(length - 1).clone().refineWith(refineConstr).upperBound(poly0)
+        else rho(u - 1).clone().affineImage(0, incrExpr)
 
-  def validate(rho: Int => DoubleBox) =
+  def validate(rho: Int => P) =
     for i <- 0 until length do
       assert(
         rho(i).equals(
-          DoubleBox.from(
+          dom.createFrom(
             ConstraintSystem.of(
               Constraint.of(
-                LinearExpression.of(0, 1),
+                LinearExpression.of(-i, 1),
                 Constraint.ConstraintType.GREATER_OR_EQUAL
               ),
               Constraint.of(
@@ -71,32 +70,38 @@ class OverheadBoxBench:
         )
       )
 
-  @Benchmark
-  def scalafixWithoutCombos() =
-    val eqs = FiniteEquationSystem[Int, DoubleBox](
-      initialBody = body,
-      initialInfl = Relation(),
-      unknowns = 0 until length,
-      inputUnknowns = Set()
-    )
-    RoundRobinSolver(eqs)(Assignment(box0))
+  def validateWithCombos(rho: Int => P) =
+    for i <- 0 until length do
+      assert(
+        rho(i).equals(
+          dom.createFrom(
+            ConstraintSystem.of(
+              Constraint.of(
+                LinearExpression.of(-i, 1),
+                Constraint.ConstraintType.GREATER_OR_EQUAL
+              )
+            )
+          )
+        )
+      )
 
-  @Benchmark
-  def scalafixWithCombos() =
-    val eqs = FiniteEquationSystem(
+  val eqs = FiniteEquationSystem[Int, P](
       initialBody = body,
       initialInfl = Relation(),
       unknowns = 0 until length,
       inputUnknowns = Set()
     )
-    val combo =
-      Combo({ (x: DoubleBox, y: DoubleBox) => y.clone().upperBound(x).widening(x) }, true)
-    val combos = ComboAssignment(combo)
-    val eqs2 = eqs.withCombos(combos)
-    RoundRobinSolver(eqs2)(Assignment(box0))  
+  val combos = ComboAssignment(
+      Combo( (x: P, y: P) => y.clone().upperBound(x).widening(x) , isIdempotent = true)
+  )
+  val eqs2 = eqs.withCombos(combos)
+
+  def scalafix(withCombos: Boolean) =
+    val realEqs = if withCombos then eqs2 else eqs
+    RoundRobinSolver(realEqs)(Assignment(dom.createEmpty(1)))
 
   def hashMap(withCombos: Boolean) =
-    var rho = mutable.Map[Int, DoubleBox]().withDefaultValue(box0)
+    var rho = mutable.Map[Int, P]().withDefaultValue(dom.createEmpty(1))
     var dirty = true
     var i = 0
     while dirty do
@@ -105,24 +110,18 @@ class OverheadBoxBench:
       while i < length do
         val v = rho(i)
         val vtmp = body(rho)(i)
-        var vnew =
+        val vnew =
           if withCombos
           then vtmp.clone().upperBound(v).widening(v)
           else vtmp
-        if v != vnew then
+        if vnew != v then
           rho(i) = vnew
           dirty = true
         i += 1
     rho
-
-  @Benchmark
-  def hashMapWithoutCombos() = hashMap(false)
-
-  @Benchmark
-  def hashMapWithCombos() = hashMap(true)
 
   def array(withCombos: Boolean) =
-    var rho = Array.fill(length)(box0)
+    var rho = Array.fill(length)(dom.createEmpty(1))
     var dirty = true
     var i = 0
     while dirty do
@@ -131,18 +130,64 @@ class OverheadBoxBench:
       while i < length do
         val v = rho(i)
         val vtmp = body(rho)(i)
-        var vnew =
+        val vnew =
           if withCombos
           then vtmp.clone().upperBound(v).widening(v)
           else vtmp
-        if v != vnew then
+        if vnew != v then
           rho(i) = vnew
           dirty = true
         i += 1
     rho
 
-  @Benchmark
-  def arrayWithoutCombos() = array(false)
+  // validating
+  validate(scalafix(false))
+  validateWithCombos(scalafix(true))
+  validate(hashMap(false))
+  validateWithCombos(hashMap(true))
+  validate(array(false))
+  validateWithCombos(array(true))
+
+@State(Scope.Benchmark)
+@Warmup(iterations = 3)
+@Fork(value = 1)
+class OverheadPPLBench:
+
+  val polySolvers = OverheadPPLBenchSolvers(CPolyhedronDomain())
+  val boxSolvers = OverheadPPLBenchSolvers(DoubleBoxDomain())
 
   @Benchmark
-  def arrayWithCombos() = array(true)
+  def scalafixPolyWithoutCombos() = polySolvers.scalafix(false)
+
+  @Benchmark
+  def scalafixPolyWithCombos() = polySolvers.scalafix(true)
+
+  @Benchmark
+  def hashMapPolWithoutCombos() = polySolvers.hashMap(false)
+
+  @Benchmark
+  def hashMapPolWithCombos() = polySolvers.hashMap(true)
+
+  @Benchmark
+  def arrayPolWithoutCombos() = polySolvers.array(false)
+
+  @Benchmark
+  def arrayPolWithCombos() = polySolvers.array(true)
+
+  @Benchmark
+  def scalafixBoxWithoutCombos() = boxSolvers.scalafix(false)
+
+  @Benchmark
+  def scalafixBoxWithCombos() = boxSolvers.scalafix(true)
+
+  @Benchmark
+  def hashMapBoxWithoutCombos() = boxSolvers.hashMap(false)
+
+  @Benchmark
+  def hashMapBoxWithCombos() = boxSolvers.hashMap(true)
+
+  @Benchmark
+  def arrayBoxWithoutCombos() = boxSolvers.array(false)
+
+  @Benchmark
+  def arrayBoxWithCombos() = boxSolvers.array(true)
