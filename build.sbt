@@ -24,6 +24,6 @@ lazy val root = (project in file("."))
   .settings(
     name := "ScalaFixExamples",
     libraryDependencies += "it.unich.scalafix" %% "scalafix" % "0.10.0-SNAPSHOT",
-    libraryDependencies += "it.unich.jppl" % "jppl" % "0.3",
+    libraryDependencies += "it.unich.jppl" % "jppl" % "0.4-SNAPSHOT",
   )
   .enablePlugins(JmhPlugin)
