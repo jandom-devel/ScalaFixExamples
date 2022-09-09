@@ -81,8 +81,13 @@ class InterProcedualAnalysisExample[P <: Property[P]](
   )
 
   /*
-   * the function is: incr(x) = x+1 the program is: x=y=0 p0 y=incr(x) p1
-   * y=incr(y) p2
+   * the function is:
+   *   incr(x) = x+1
+   * the program is:
+   *   x=y=0
+   *   p0 y=incr(x)
+   *   p1 y=incr(y)
+   *   p2
    */
   val initialBody: Body[U[P], P] = (rho: U[P] => P) =>
     case U("incr_start", i) =>
@@ -120,9 +125,14 @@ class InterProcedualAnalysisExample[P <: Property[P]](
     })
     val solution = infinite.WorkListSolver(eqs)(initialAssignment, wanted)
     for (pp <- wanted)
-      println(s"${pp} -> ${solution(pp)}")    
+      println(s"${pp} -> ${solution(pp)}")
     println("\nComplete result:")
-    println(solution.toSeq.sortBy(_._1.toString).map( p => s"${p._1} -> ${p._2}").mkString("", "\n", ""))
+    println(
+      solution.toSeq
+        .sortBy(_._1.toString)
+        .map(p => s"${p._1} -> ${p._2}")
+        .mkString("", "\n", "")
+    )
 
 object IPAExampleNoWidening extends App:
   InterProcedualAnalysisExample(DoubleBoxDomain(), NoContextWidening()).run()
