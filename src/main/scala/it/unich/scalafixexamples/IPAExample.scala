@@ -23,6 +23,7 @@ import it.unich.scalafix.*
 import it.unich.scalafix.infinite
 
 import scala.collection.mutable
+import it.unich.jppl.Constraint.ConstraintType
 
 /** Class used for labels of program points.
   * @param pp
@@ -80,40 +81,52 @@ class InterProcedualAnalysisExample[P <: Property[P]](
     Constraint.of(LinearExpression.of(0, 0, 1), Constraint.ConstraintType.EQUAL)
   )
 
+  /** A function for concatenating calling and return contexts. */
+  def concatenateReturn(p: P, ret: P, commonDims: Long): P =
+    val pdims = p.getSpaceDimension()
+    val retdims = ret.getSpaceDimension()
+    p.addSpaceDimensionsAndEmbed(retdims-commonDims)
+    ret.addSpaceDimensionsAndEmbed(pdims-commonDims)
+    val mapDims = (pdims-commonDims).until(retdims+pdims-commonDims) ++ 0L.until(pdims-commonDims)
+    ret.mapSpaceDimensions(mapDims.toArray)
+    p.intersection(ret)
+
   /*
    * the function is:
    *   incr(x) = x+1
    * the program is:
    *   x=y=0
    *   p0 y=incr(x)
-   *   p1 y=incr(y)
+   *   p1 x=incr(y)
    *   p2
    */
   val initialBody: Body[U[P], P] = (rho: U[P] => P) =>
     case U("incr_start", i) =>
-      i
+      i.clone()
     case U("incr_end", i) =>
-      rho(U("incr_start", i)).clone().affineImage(0, xplus1)
+      rho(U("incr_start", i)).clone().addSpaceDimensionsAndEmbed(1).affineImage(1, xplus1)
     case U("p0", i) =>
       dom.createFrom(xyeq0)
     case U("p1", i) =>
-      val p0 = rho(U("p0", i))
-      val projection = p0.clone().removeHigherSpaceDimensions(1)
-      val call_context = projection
-      val result = rho(widen(U("incr_end", call_context)))
-      projection.clone().concatenate(result)
+      val p0 = rho(U("p0", i)).clone()
+      val p0WithParameters = p0.mapSpaceDimensions(Array(1,0))
+      val call_context = p0WithParameters.clone().removeSpaceDimensions(Array(0))
+      val result = rho(widen(U("incr_end", call_context))).clone()
+      concatenateReturn(p0WithParameters, result, 1)
+        .mapSpaceDimensions(Array(PPL.getNotADimension(), 0, 1))
     case U("p2", i) =>
-      val p1 = rho(U("p1", i))
-      val projection = p1.clone().removeHigherSpaceDimensions(1)
-      val call_context = p1.clone().removeSpaceDimensions(Array(0))
-      val result = rho(widen(U("incr_end", call_context)))
-      projection.clone().concatenate(result)
+      val p1 = rho(U("p1", i)).clone()
+      val p1WithParameters = p1
+      val call_context = p1WithParameters.clone().removeSpaceDimensions(Array(0))
+      val result = rho(widen(U("incr_end", call_context))).clone()
+      concatenateReturn(p1WithParameters, result, 1)
+        .mapSpaceDimensions(Array(PPL.getNotADimension(), 1, 0))
 
   val eqs = EquationSystem(initialBody)
 
   val initialAssignment: Assignment[U[P], P] =
     case U("incr_start", _) => dom.createEmpty(1)
-    case U("incr_end", _)   => dom.createEmpty(1)
+    case U("incr_end", _)   => dom.createEmpty(2)
     case _                  => dom.createEmpty(2)
 
   def run() =
@@ -134,9 +147,16 @@ class InterProcedualAnalysisExample[P <: Property[P]](
         .mkString("", "\n", "")
     )
 
-object IPAExampleNoWidening extends App:
+object IPAExampleBoxNoWidening extends App:
   InterProcedualAnalysisExample(DoubleBoxDomain(), NoContextWidening()).run()
 
-object IPAExampleWidening extends App:
+object IPAExampleBoxWidening extends App:
   InterProcedualAnalysisExample(DoubleBoxDomain(), SingleContextWidening())
+    .run()
+
+object IPAExamplePolyNoWidening extends App:
+  InterProcedualAnalysisExample(CPolyhedronDomain(), NoContextWidening()).run()
+
+object IPAExamplePolyWidening extends App:
+  InterProcedualAnalysisExample(CPolyhedronDomain(), SingleContextWidening())
     .run()
