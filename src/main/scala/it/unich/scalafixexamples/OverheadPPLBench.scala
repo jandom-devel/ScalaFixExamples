@@ -149,8 +149,6 @@ class OverheadPPLBenchSolvers[P <: Property[P] : ClassTag](dom: Domain[P]):
   validateWithCombos(array(true))
 
 @State(Scope.Benchmark)
-@Warmup(iterations = 3)
-@Fork(value = 1)
 class OverheadPPLBench:
 
   val polySolvers = OverheadPPLBenchSolvers(CPolyhedronDomain())

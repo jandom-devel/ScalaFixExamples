@@ -26,7 +26,6 @@ import org.openjdk.jmh.annotations.*
 import scala.collection.mutable
 
 @State(Scope.Benchmark)
-@Warmup(iterations = 3)
 class OverheadReachingDefsBench {
 
   val length = 8

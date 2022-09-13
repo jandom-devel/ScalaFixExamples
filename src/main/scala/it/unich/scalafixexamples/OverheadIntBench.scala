@@ -27,8 +27,6 @@ import java.util.concurrent.TimeUnit
 import scala.collection.mutable
 
 @State(Scope.Benchmark)
-@Warmup(iterations = 3)
-@Fork(value = 1)
 class OverheadIntBench:
 
   def chainEquation(length: Int): Body[Int, Int] =
