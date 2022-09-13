@@ -78,7 +78,7 @@ class OverheadIntBench:
       override def getMutableAssignment(rho: Assignment[Int, Int]) =
         ArrayBasedMutableAssignment(rho, unknowns.max + 1)
 
-    val sol = RoundRobinSolver(eqs)(Assignment(0))  
+    val sol = RoundRobinSolver(eqs)(Assignment(0))
 
   def MyRoundRobinSolver(
       eqs: SimpleFiniteEquationSystem[Int, Int],
@@ -99,7 +99,7 @@ class OverheadIntBench:
           current(x) = newval
           dirty = true
         x += 1
-    current  
+    current
 
   // A custom round robin solver using the ScalaFix equation system array-based assignments.
   @Benchmark
@@ -112,7 +112,7 @@ class OverheadIntBench:
     ):
       override def getMutableAssignment(rho: Assignment[Int, Int]) =
         ArrayBasedMutableAssignment(rho, unknowns.max + 1)
-    
+
     val sol = MyRoundRobinSolver(eqs, Assignment(0))
   }
 
