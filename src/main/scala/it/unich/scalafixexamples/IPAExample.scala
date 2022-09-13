@@ -65,7 +65,7 @@ class SingleContextWidening[P <: Property[P]] extends ContextWidening[P]:
         widen_data(u.pp) = u.context.clone()
         u
       case Some(v) =>
-        val vnew = v.upperBound(u.context).widening(u.context)
+        val vnew = v.clone().upperBound(u.context).widening(u.context)
         widen_data(u.pp) = vnew
         U(u.pp, vnew)
 
