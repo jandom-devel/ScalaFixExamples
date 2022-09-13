@@ -1,5 +1,6 @@
 /** Copyright 2022 Gianluca Amato <gianluca.amato@unich.it>
-  *
+  *        and Francesca Scozzari <francesca.scozzari@unich.it>
+  * 
   * This file is part of ScalaFixExamples, a set of examples for the ScalaFix
   * library. ScalaFixExamples is free software: you can redistribute it and/or
   * modify it under the terms of the GNU General Public License as published by
@@ -77,10 +78,10 @@ class InterProcedualAnalysisExample[P <: Property[P]](
     widen: ContextWidening[P]
 ):
 
-  // the linear expression x+1
-  val iplus1 = LinearExpression.of(1, 1)
+  // the linear expression a+1
+  val aplus1 = LinearExpression.of(1, 1)
 
-  // the constraint system {x=0, y=0}
+  // the constraint system {i=0, j=0}
   val ijeq0 = ConstraintSystem.of(
     Constraint.of(LinearExpression.of(0, 1), Constraint.ConstraintType.EQUAL),
     Constraint.of(LinearExpression.of(0, 0, 1), Constraint.ConstraintType.EQUAL)
@@ -101,9 +102,9 @@ class InterProcedualAnalysisExample[P <: Property[P]](
 
   /*
    * The function is:
-   *   function incr(i) {
-   *      [1] j = i + 1
-   *      [2] return j
+   *   function incr(a) {
+   *      [1] b = a + 1
+   *      [2] return b
    *      [3]
    *   }
    * The main program is:
@@ -116,7 +117,7 @@ class InterProcedualAnalysisExample[P <: Property[P]](
     case U(1, c) =>
       c.clone().addSpaceDimensionsAndEmbed(1)
     case U(2, c) =>
-      rho(U(1, c)).clone().affineImage(1, iplus1)
+      rho(U(1, c)).clone().affineImage(1, aplus1)
     case U(3, c) =>
       rho(U(2, c))
     case U(4, c) =>
@@ -141,11 +142,7 @@ class InterProcedualAnalysisExample[P <: Property[P]](
 
   def run() =
     val wanted = Seq(U(6, dom.createEmpty(0)))
-    PPL.ioSetVariableOutputFunction({
-      case 0 => "i"
-      case 1 => "j"
-      case i => "v" + i
-    })
+    PPL.ioSetVariableOutputFunction("v"+_)
     val solution = infinite.WorkListSolver(eqs)(initialAssignment, wanted)
     for (pp <- wanted)
       println(s"${pp} -> ${solution(pp)}")
