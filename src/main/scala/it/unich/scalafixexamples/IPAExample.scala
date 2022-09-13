@@ -25,14 +25,19 @@ import it.unich.scalafix.infinite
 import scala.collection.mutable
 import it.unich.jppl.Constraint.ConstraintType
 
-/** Class used for labels of program points.
+/** Class used for unknowns.
   * @param pp
   *   a string for the program point
   * @param context
-  *   an abstract object containing the calling context (actual parameters)
+  *   an abstraction of the value of formal parameters for a function
   */
-case class U[P <: Property[P]](pp: String, context: P):
-  override def hashCode(): Int = 3 * pp.hashCode + context.toString.hashCode
+case class U[P <: Property[P]](pp: Int, context: P):
+  /** We define an hash code for the unknowns. This is needed since the default
+    * hash code for JPPL is not correct (equal objects may have different hash
+    * codes). As a fast hack, we use the hash code of the String representation
+    * of the hash code.
+    */
+  override def hashCode(): Int = 3 * pp + 5 * context.toString.hashCode
 
 /** Interface for widening of contexts in function calls.
   */
@@ -47,7 +52,7 @@ class NoContextWidening[P <: Property[P]] extends ContextWidening[P]:
 /** A widening which only keeps a single context for each function call.
   */
 class SingleContextWidening[P <: Property[P]] extends ContextWidening[P]:
-  val widen_data = mutable.Map.empty[String, P]
+  val widen_data = mutable.Map.empty[Int, P]
 
   def apply(u: U[P]): U[P] =
     val optV = widen_data.get(u.pp)
@@ -73,10 +78,10 @@ class InterProcedualAnalysisExample[P <: Property[P]](
 ):
 
   // the linear expression x+1
-  val xplus1 = LinearExpression.of(1, 1)
+  val iplus1 = LinearExpression.of(1, 1)
 
   // the constraint system {x=0, y=0}
-  val xyeq0 = ConstraintSystem.of(
+  val ijeq0 = ConstraintSystem.of(
     Constraint.of(LinearExpression.of(0, 1), Constraint.ConstraintType.EQUAL),
     Constraint.of(LinearExpression.of(0, 0, 1), Constraint.ConstraintType.EQUAL)
   )
@@ -85,56 +90,61 @@ class InterProcedualAnalysisExample[P <: Property[P]](
   def concatenateReturn(p: P, ret: P, commonDims: Long): P =
     val pdims = p.getSpaceDimension()
     val retdims = ret.getSpaceDimension()
-    p.addSpaceDimensionsAndEmbed(retdims-commonDims)
-    ret.addSpaceDimensionsAndEmbed(pdims-commonDims)
-    val mapDims = (pdims-commonDims).until(retdims+pdims-commonDims) ++ 0L.until(pdims-commonDims)
+    p.addSpaceDimensionsAndEmbed(retdims - commonDims)
+    ret.addSpaceDimensionsAndEmbed(pdims - commonDims)
+    val mapDims =
+      (pdims - commonDims).until(retdims + pdims - commonDims) ++ 0L.until(
+        pdims - commonDims
+      )
     ret.mapSpaceDimensions(mapDims.toArray)
     p.intersection(ret)
 
   /*
-   * the function is:
-   *   incr(x) = x+1
-   * the program is:
-   *   x=y=0
-   *   p0 y=incr(x)
-   *   p1 x=incr(y)
-   *   p2
+   * The function is:
+   *   function incr(i) {
+   *      [1] j = i + 1
+   *      [2] return j
+   *      [3]
+   *   }
+   * The main program is:
+   *       i = j = 0
+   *   [4] j = incr(i)
+   *   [5] i = incr(j)
+   *   [6]
    */
   val initialBody: Body[U[P], P] = (rho: U[P] => P) =>
-    case U("incr_start", i) =>
-      i.clone()
-    case U("incr_end", i) =>
-      rho(U("incr_start", i)).clone().addSpaceDimensionsAndEmbed(1).affineImage(1, xplus1)
-    case U("p0", i) =>
-      dom.createFrom(xyeq0)
-    case U("p1", i) =>
-      val p0 = rho(U("p0", i)).clone()
-      val p0WithParameters = p0.mapSpaceDimensions(Array(1,0))
-      val call_context = p0WithParameters.clone().removeSpaceDimensions(Array(0))
-      val result = rho(widen(U("incr_end", call_context))).clone()
-      concatenateReturn(p0WithParameters, result, 1)
-        .mapSpaceDimensions(Array(PPL.getNotADimension(), 0, 1))
-    case U("p2", i) =>
-      val p1 = rho(U("p1", i)).clone()
-      val p1WithParameters = p1
-      val call_context = p1WithParameters.clone().removeSpaceDimensions(Array(0))
-      val result = rho(widen(U("incr_end", call_context))).clone()
-      concatenateReturn(p1WithParameters, result, 1)
-        .mapSpaceDimensions(Array(PPL.getNotADimension(), 1, 0))
-
+    case U(1, c) =>
+      c.clone().addSpaceDimensionsAndEmbed(1)
+    case U(2, c) =>
+      rho(U(1, c)).clone().affineImage(1, iplus1)
+    case U(3, c) =>
+      rho(U(2, c))
+    case U(4, c) =>
+      dom.createFrom(ijeq0)
+    case U(5, c) =>
+      val call_context = rho(U(4, c)).clone().removeSpaceDimensions(Array(1))
+      val return_context = rho(widen(U(3, call_context)))
+      val p0 = rho(U(4, c)).clone().mapSpaceDimensions(Array(1, 0))
+      val p1 = concatenateReturn(p0, return_context.clone(), 1)
+      val result = p1.mapSpaceDimensions(Array(PPL.getNotADimension(), 0, 1))
+      result
+    case U(6, c) =>
+      val call_context = rho(U(5, c)).clone().removeSpaceDimensions(Array(0))
+      val return_context = rho(widen(U(3, call_context)))
+      val p0 = rho(U(5, c)).clone()
+      val p1 = concatenateReturn(p0, return_context.clone(), 1)
+      val result = p1.mapSpaceDimensions(Array(PPL.getNotADimension(), 1, 0))
+      result
   val eqs = EquationSystem(initialBody)
 
-  val initialAssignment: Assignment[U[P], P] =
-    case U("incr_start", _) => dom.createEmpty(1)
-    case U("incr_end", _)   => dom.createEmpty(2)
-    case _                  => dom.createEmpty(2)
+  val initialAssignment: Assignment[U[P], P] = Assignment(dom.createEmpty(2))
 
   def run() =
-    val wanted = Seq(U("p2", dom.createEmpty(0)))
+    val wanted = Seq(U(6, dom.createEmpty(0)))
     PPL.ioSetVariableOutputFunction({
-      case 0 => "x"
-      case 1 => "y"
-      case i => "x" + i
+      case 0 => "i"
+      case 1 => "j"
+      case i => "v" + i
     })
     val solution = infinite.WorkListSolver(eqs)(initialAssignment, wanted)
     for (pp <- wanted)
