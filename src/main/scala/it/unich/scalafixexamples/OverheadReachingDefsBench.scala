@@ -49,7 +49,7 @@ class OverheadReachingDefsBench {
   )
 
   @Benchmark
-  def scalafixWithoutCombos() = {
+  def scalafix() = {
     RoundRobinSolver(eqs)(Assignment(Set()))
   }
 
