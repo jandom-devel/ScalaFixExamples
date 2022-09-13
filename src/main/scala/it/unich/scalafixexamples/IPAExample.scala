@@ -23,8 +23,11 @@ import it.unich.jppl.*
 import it.unich.scalafix.*
 import it.unich.scalafix.infinite
 
-import scala.collection.mutable
 import it.unich.jppl.Constraint.ConstraintType
+
+import scala.collection.mutable
+
+import java.util.Objects
 
 /** Class used for unknowns.
   * @param pp
@@ -38,7 +41,7 @@ case class U[P <: Property[P]](pp: Int, context: P):
     * codes). As a fast hack, we use the hash code of the String representation
     * of the hash code.
     */
-  override def hashCode(): Int = 3 * pp + 5 * context.toString.hashCode
+  override def hashCode(): Int = Objects.hash(pp, context.toString)
 
 /** Interface for widening of contexts in function calls.
   */
