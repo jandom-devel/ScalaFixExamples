@@ -29,25 +29,25 @@ import it.unich.scalafix.utils.Relation
 object JPPLExampleEquationSystems:
 
   // the constraint system {x=0}
-  val xeq0 = ConstraintSystem.of(
+  val ieq0 = ConstraintSystem.of(
     Constraint.of(LinearExpression.of(0, 1), Constraint.ConstraintType.EQUAL)
   )
 
   // the constraint x<=10
-  val xleq10 = Constraint.of(
+  val ileq10 = Constraint.of(
     LinearExpression.of(-10, 1),
     Constraint.ConstraintType.LESS_OR_EQUAL
   )
 
   // the linear expression x+1
-  val xplus1 = LinearExpression.of(1, 1)
+  val iplus1 = LinearExpression.of(1, 1)
 
   def buildFiniteEQS[P <: Property[P]](dom: jppl.Domain[P]) =
     /** This is the equation system corresponding to the program:
       * ```
-      *      x=0;
-      *  [0] while [1] (x<=10) {
-      *  [2]    x=x+1;
+      *      i=0;
+      *  [0] while [1] (i<=10) {
+      *  [2]    i=i+1;
       *  [3] }
       * ```
       * where the program points [0],[1],[2],[3] are the unknowns of the
@@ -55,10 +55,10 @@ object JPPLExampleEquationSystems:
       */
     FiniteEquationSystem(
       initialBody = (rho: Int => P) => {
-        case 0 => dom.createFrom(xeq0)
+        case 0 => dom.createFrom(ieq0)
         case 1 => rho(0).clone().upperBound(rho(3))
-        case 2 => rho(1).clone().refineWith(xleq10)
-        case 3 => rho(2).clone().affineImage(0, xplus1)
+        case 2 => rho(1).clone().refineWith(ileq10)
+        case 3 => rho(2).clone().affineImage(0, iplus1)
       },
       initialInfl = Relation(0 -> 1, 1 -> 2, 2 -> 3, 3 -> 1),
       inputUnknowns = Set(0),
@@ -68,37 +68,37 @@ object JPPLExampleEquationSystems:
   def buildGraphEQS[P <: Property[P]](using dom: jppl.Domain[P]) =
     /** This is the graph equation system corresponding to the program:
       * ```
-      *     x=0;
-      * [0] while [1] (x<=10) {
-      * [2]   x=x+1;
+      *     i=0;
+      * [0] while [1] (i<=10) {
+      * [2]   i=i+1;
       * [3] }
       * ```
       * where the program points [0],[1],[2],[3] are the unknowns of the
       * equation system.
       */
     val graphBody = GraphBody[Int, P, String](
-      sources = Relation("enter" -> 0, "x<=10" -> 1, "x=x+1" -> 2, "loop" -> 3),
+      sources = Relation("enter" -> 0, "i<=10" -> 1, "i=i+1" -> 2, "loop" -> 3),
       target =
-        Map("x=0" -> 0, "enter" -> 1, "x<=10" -> 2, "x=x+1" -> 3, "loop" -> 1),
+        Map("i=0" -> 0, "enter" -> 1, "i<=10" -> 2, "i=i+1" -> 3, "loop" -> 1),
       ingoing = Relation(
-        0 -> "x=0",
+        0 -> "i=0",
         1 -> "enter",
         1 -> "loop",
-        2 -> "x<=10",
-        3 -> "x=x+1"
+        2 -> "i<=10",
+        3 -> "i=i+1"
       ),
       outgoing = Relation(
         0 -> "enter",
-        1 -> "x<=10",
-        2 -> "x=x+1",
+        1 -> "i<=10",
+        2 -> "i=i+1",
         3 -> "loop"
       ),
       edgeAction = { (rho: Assignment[Int, P]) =>
         {
-          case "x=0"   => dom.createFrom(xeq0)
+          case "i=0"   => dom.createFrom(ieq0)
           case "enter" => rho(0)
-          case "x<=10" => rho(1).clone().refineWith(xleq10)
-          case "x=x+1" => rho(2).clone().affineImage(0, xplus1)
+          case "i<=10" => rho(1).clone().refineWith(ileq10)
+          case "i=i+1" => rho(2).clone().affineImage(0, iplus1)
           case "loop" => rho(3)
         }
       },
