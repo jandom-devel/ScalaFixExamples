@@ -1,13 +1,13 @@
-# Instructions for the ScalaFix artifact
+# Instructions for the ScalaFix artefact
 
-This artifact is a docker image containing both ScalaFix, the fixpoint library, and ScalaFixExample, the collection of all
+This artefact is a docker image containing both ScalaFix, the fixpoint library, and ScalaFixExample, the collection of all
 the examples and benchmarks shown in the paper. Both the source code and compiled bytecode are provided. Moreover, the image
 contains all the libraries, compilers and tools needed to execute examples and benchmarks, which may be eventually modified
 and recompiled if desired.
 
-The ZIP contains the files `License.txt` and this `README`, as required by the artifact guidelines. The `README` is actually
+The ZIP contains the files `License.txt` and this `README`, as required by the artefact guidelines. The `README` is actually
 in Markdown format. The file `README.pdf` contains a PDF version of  `README`, while `scalafix-examples.tgz` is the Docker
-image of the artifact.
+image of the artefact.
 
 Load this image in your Docker environment with
 
