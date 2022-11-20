@@ -43,4 +43,4 @@ The source code of ScalaFix is not automatically fetched by the build tool. If y
 
 From the ScalaFix root directory you can launch `sbt` and:
   * execute the unit tests with the command `test`;
-  * execute the benchmarks (they are different from those in ScalaFixExample) with the command `bench/Jmh/run` (it takes about 33 minutes).
+  * execute the benchmarks (they are different from those in ScalaFixExample) with the command `bench/Jmh/run` (it takes about 56 minutes).

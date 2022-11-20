@@ -76,7 +76,7 @@ The directory `/home/scalafix/ScalaFix` contains a copy of the Scalafix source c
   * `/home/scalafix/ScalaFix/core/src/test/scala/it/unich/scalafix/` contains the unit tests;
   * `/home/scalafix/ScalaFix/bench/src/main/scala/it/unich/scalafix/jmh/` contains benchmarks.
 
-From the `/home/scalafix/ScalaFix` directory you can run the ScalaFix unit tests with `sbt` and, from the SBT prompt `sbt:scalafix>` , give the command `test` (note that this SBT prompt is different from the previous one since you must be in the `/home/scalafix/ScalaFix` directory). From the same SBT prompt you can execute the benchmarks with `bench/Jmh/run` (it takes about 33 minutes; these benchmarks are different from the ones described above and in the paper).
+From the `/home/scalafix/ScalaFix` directory you can run the ScalaFix unit tests with `sbt` and, from the SBT prompt `sbt:scalafix>` , give the command `test` (note that this SBT prompt is different from the previous one since you must be in the `/home/scalafix/ScalaFix` directory). From the same SBT prompt you can execute the benchmarks with `bench/Jmh/run` (it takes about 56 minutes; these benchmarks are different from the ones described above and in the paper).
 
 ## Docker
 
