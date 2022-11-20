@@ -1,0 +1,8 @@
+Core i5-2500K 16 GB RAM, powersave governor, no Turbo Boost
+5 threads, 5 warmup iterations, 5 iterations
+
+[info] Benchmark                            Mode  Cnt      Score     Error  Units
+[info] OverheadReachingDefsBench.array     thrpt   25  16891.843 ±  69.180  ops/s
+[info] OverheadReachingDefsBench.hashMap   thrpt   25  16393.496 ±  17.362  ops/s
+[info] OverheadReachingDefsBench.scalafix  thrpt   25  16323.871 ± 103.131  ops/s
+[success] Total time: 1514 s (25:14), completed Nov 20, 2022, 1:57:32 PM

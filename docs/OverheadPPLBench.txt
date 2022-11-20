@@ -1,0 +1,17 @@
+Core i5-2500K 16 GB RAM, powersave governor, no Turbo Boost
+5 threads, 5 warmup iterations, 5 iterations
+
+[info] Benchmark                                    Mode  Cnt    Score    Error  Units
+[info] OverheadPPLBench.arrayBoxWithCombos         thrpt   25  244.646 ± 39.670  ops/s
+[info] OverheadPPLBench.arrayBoxWithoutCombos      thrpt   25   57.406 ±  5.726  ops/s
+[info] OverheadPPLBench.arrayPolWithCombos         thrpt   25   83.010 ±  7.750  ops/s
+[info] OverheadPPLBench.arrayPolWithoutCombos      thrpt   25   13.624 ±  1.281  ops/s
+[info] OverheadPPLBench.hashMapBoxWithCombos       thrpt   25  263.677 ± 32.807  ops/s
+[info] OverheadPPLBench.hashMapBoxWithoutCombos    thrpt   25   57.044 ±  5.704  ops/s
+[info] OverheadPPLBench.hashMapPolWithCombos       thrpt   25   83.578 ±  9.271  ops/s
+[info] OverheadPPLBench.hashMapPolWithoutCombos    thrpt   25   13.832 ±  1.029  ops/s
+[info] OverheadPPLBench.scalafixBoxWithCombos      thrpt   25  263.055 ± 34.202  ops/s
+[info] OverheadPPLBench.scalafixBoxWithoutCombos   thrpt   25   55.829 ±  4.893  ops/s
+[info] OverheadPPLBench.scalafixPolyWithCombos     thrpt   25   82.554 ± 10.947  ops/s
+[info] OverheadPPLBench.scalafixPolyWithoutCombos  thrpt   25   13.180 ±  1.349  ops/s
+[success] Total time: 6186 s (01:43:06), completed Nov 20, 2022, 12:28:12 PM

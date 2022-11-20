@@ -51,11 +51,11 @@ The following are other examples not included in the paper:
 
 ## Benchmarks
 
-Benchmarks may be run from the SBT prompt with `Jmh/run` . Since this executes all the benchmarks, it takes a lot of time (about 45 minutes).
+Benchmarks may be run from the SBT prompt with `Jmh/run` . Since this executes all the benchmarks, it takes a lot of time (about 125 minutes).
 It is possible to execute a single benchmark with `Jmh/run <classname>` where `<classname>` may be:
 
-  * [OverheadPPLBench](https://github.com/jandom-devel/ScalaFixExamples/blob/master/src/main/scala/it/unich/scalafixexamples/OverheadBoxBench.scala): Benchmarks the equation system (1) in Section 6 using both ScalaFix and ad-hoc solvers. It takes about 8 minutes.
-  * [OverheadReachingDefsBench](https://github.com/jandom-devel/ScalaFixExamples/blob/master/src/main/scala/it/unich/scalafixexamples/OverheadReachingDefsBench.scala): Benchmarks the equation system in the `ReachingDefinitionsExample` using both ScalaFix and ad-hoc solvers. It takes about 20 minutes.
+  * [OverheadPPLBench](https://github.com/jandom-devel/ScalaFixExamples/blob/master/src/main/scala/it/unich/scalafixexamples/OverheadBoxBench.scala): Benchmarks the equation system (1) in Section 6 using both ScalaFix and ad-hoc solvers. It takes about 100 minutes.
+  * [OverheadReachingDefsBench](https://github.com/jandom-devel/ScalaFixExamples/blob/master/src/main/scala/it/unich/scalafixexamples/OverheadReachingDefsBench.scala): Benchmarks the equation system in the `ReachingDefinitionsExample` using both ScalaFix and ad-hoc solvers. It takes about 25 minutes.
 
 ## Modify the examples
 
