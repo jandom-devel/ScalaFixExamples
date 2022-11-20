@@ -26,7 +26,7 @@ If the PPL is not available as a package, you can download the source code and c
 
 In order to compile and execute the examples, you need the [Scala Build Tool](https://www.scala-sbt.org/) (SBT) installed in your computer. Then, launching the `sbt` command inside the root directory of the repository (the folder containing the `build.sbt` file) will execute the interactive build tool, from where you can:
 
-  * execute benchmarks with the command `Jmh/run` (it takes about 45 minutes).
+  * execute benchmarks with the command `Jmh/run` (it takes about 3h 45m).
   * execute examples by giving the command `run ` and choosing the number of the example you want.
 
 ## Docker
@@ -43,4 +43,4 @@ The source code of ScalaFix is not automatically fetched by the build tool. If y
 
 From the ScalaFix root directory you can launch `sbt` and:
   * execute the unit tests with the command `test`;
-  * execute the benchmarks (they are different from those in ScalaFixExample) with the command `bench/Jmh/run` (it takes about 56 minutes).
+  * execute the benchmarks (they are different from those in ScalaFixExample) with the command `bench/Jmh/run`.
