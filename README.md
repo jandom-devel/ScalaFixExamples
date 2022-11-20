@@ -31,7 +31,7 @@ In order to compile and execute the examples, you need the [Scala Build Tool](ht
 
 ## Docker
 
-In the `docker` directory you may find the recipes to build a Docker image with ScalaFixExamples and the relevant libraries. Just execute `docker-compose up` inside the `docker` directory in a system where Docker and Docker Compose are installed. Note that, due to [this issue](https://github.com/moby/moby/commit/9f6b562dd12ef7b1f9e2f8e6f2ab6477790a6594), a recent version of Docker is required (20.10.16 or later should be fine).
+In the `docker` directory you may find the recipes to build a Docker image with ScalaFixExamples and the relevant libraries. Just execute `docker-compose build` inside the `docker` directory in a system where Docker and Docker Compose are installed. Note that, due to [this issue](https://github.com/moby/moby/commit/9f6b562dd12ef7b1f9e2f8e6f2ab6477790a6594), a recent version of Docker is required (20.10.16 or later should be fine).
 
 ## Accessing ScalaFix source code
 
