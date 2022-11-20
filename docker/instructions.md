@@ -15,7 +15,7 @@ The image `scalafix-examples` contains an installation of Fedora 36 with Scalafi
 The image comes with some examples on the use of ScalaFix which can be executed using `sbt` - Scala Build Tool - the standard build system for Scala.
 
 * Launch the Scala Build Tool with the command `sbt`  from the directory `/home/scalafix/ScalaFixExamples` . You will see the SBT prompt `sbt:ScalaFixExamples>` from which you can give the command `run` .
-* Choose the number of the example you want to run. These examples are not particularly significative without looking at the source code. It is possible to browse the source code with either the `emacs` or `vi` text editors, or directly from the GitHub repositories: [https://github.com/jandom-devel/ScalaFix/tree/v0.10.0](https://github.com/jandom-devel/ScalaFix/tree/v0.10.0) for  ScalaFix 0.10.0 and [https://github.com/jandom-devel/ScalaFixExamples/tree/fm2023](https://github.com/jandom-devel/ScalaFixExamples/tree/fm2023) for the FM 2023 branch of ScalaFixExamples.
+* Choose the number of the example you want to run. These examples are not particularly significant without looking at the source code. It is possible to browse the source code with either the `emacs` or `vi` text editors, or directly from the GitHub repositories: [https://github.com/jandom-devel/ScalaFix/tree/v0.10.0](https://github.com/jandom-devel/ScalaFix/tree/v0.10.0) for  ScalaFix 0.10.0 and [https://github.com/jandom-devel/ScalaFixExamples/tree/fm2023](https://github.com/jandom-devel/ScalaFixExamples/tree/fm2023) for the FM 2023 branch of ScalaFixExamples.
 
 The following are the examples presented in the paper:
 
@@ -80,6 +80,4 @@ From the `/home/scalafix/ScalaFix` directory you can run the ScalaFix unit tests
 
 ## Docker
 
-The Dockerfile which generates the current image is available in:
-
-`/home/scalafix/ScalaFixExamples/docker`.
+The Dockerfile which generates the current image is available in the directory `/home/scalafix/ScalaFixExamples/docker`.
