@@ -29,10 +29,6 @@ In order to compile and execute the examples, you need the [Scala Build Tool](ht
   * execute benchmarks with the command `Jmh/run` (it takes about 3h 45m).
   * execute examples by giving the command `run ` and choosing the number of the example you want.
 
-## Docker
-
-In the `docker` directory you may find the recipes to build a Docker image with ScalaFixExamples and the relevant libraries. Just execute `docker-compose build` inside the `docker` directory in a system where Docker and Docker Compose are installed. Note that, due to [this issue](https://github.com/moby/moby/commit/9f6b562dd12ef7b1f9e2f8e6f2ab6477790a6594), a recent version of Docker is required (20.10.16 or later should be fine).
-
 ## Accessing ScalaFix source code
 
 The source code of ScalaFix is not automatically fetched by the build tool. If you want to explore the code, you may either download or browse it interactively from the [ScalaFix](https://github.com/jandom-devel/ScalaFix) git repository. The source code of ScalaFix is organized as follows:
@@ -44,3 +40,7 @@ The source code of ScalaFix is not automatically fetched by the build tool. If y
 From the ScalaFix root directory you can launch `sbt` and:
   * execute the unit tests with the command `test`;
   * execute the benchmarks (they are different from those in ScalaFixExample) with the command `bench/Jmh/run`.
+
+## Formal Methods 2023
+
+In the `fm2023` directory you may find the files used to build the artefact for the Formal Methods 2023 conference, in particual the recipes to build a Docker image with ScalaFixExamples and the relevant libraries. Just execute `docker-compose build` inside the `fm2023` directory in a system where Docker and Docker Compose are installed. Note that, due to [this issue](https://github.com/moby/moby/commit/9f6b562dd12ef7b1f9e2f8e6f2ab6477790a6594), a recent version of Docker is required (20.10.16 or later should be fine).
