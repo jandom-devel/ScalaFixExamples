@@ -1,13 +1,13 @@
 # Instructions for the ScalaFix artifact
 
 The artifact is made available as a Docker image `scalafix-examples.tgz`. Load this image in your
-Docker environment with 
+Docker environment with
 
 `docker load -i scalafix-examples.tgz`
 
-Then, you can create a container and run it with 
+Then, you can create a container and run it with
 
-`docker run -it scalafix-examples`
+`docker run --rm -it scalafix-examples`
 
 The image `scalafix-examples` contains an installation of Fedora 36 with Scalafix and all its
 dependencies. Once started, the bash shell is executed as the user `scalafix` in the working directory
@@ -48,7 +48,7 @@ The following are new examples not included in the paper:
 
 Benchmarks may be run from the SBT prompt with `Jmh/run` . Since this executes all the benchmarks, it takes a lot of time (about 45 minutes).
 It is possible to execute a single benchmark with `Jmh/run <classname>` where `<classname>` may be:
- 
+
   * [OverheadIntBench](https://github.com/jandom-devel/ScalaFixExamples/blob/master/src/main/scala/it/unich/scalafixexamples/OverheadIntBench.scala) Benchmarks the equation system (1) in Section 6 with different solver, usign both ScalaFix and ad-hoc solvers. It takes about 16 minutes.
   * [OverheadBoxBench](https://github.com/jandom-devel/ScalaFixExamples/blob/master/src/main/scala/it/unich/scalafixexamples/OverheadBoxBench.scala) Benchmarks the equation system (2) in Section 6 with different solver, using both ScalaFix and ad-hoc solvers.  It takes about 8 minutes.
   * [OverheadReachingDefsBench](https://github.com/jandom-devel/ScalaFixExamples/blob/master/src/main/scala/it/unich/scalafixexamples/OverheadReachingDefsBench.scala) Benchmakrs the equation system in the `ReachingDefinitionsExample` using both ScalaFix and ad-hoc solvers. It takes about 20 minutes.
