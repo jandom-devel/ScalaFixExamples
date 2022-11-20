@@ -7,7 +7,7 @@ USER scalafix
 RUN cd /home/scalafix && \
     git clone https://github.com/jandom-devel/ScalaFix.git && \
     git clone https://github.com/jandom-devel/ScalaFixExamples.git && \
-    cd /home/scalafix/ScalaFix && sbt compile && \
-    cd /home/scalafix/ScalaFixExamples && sbt compile
+    cd /home/scalafix/ScalaFix && git checkout v0.10.0 && sbt compile && \
+    cd /home/scalafix/ScalaFixExamples && git checkout fm2023 && sbt compile
 ENTRYPOINT [ "/bin/bash" ]
 WORKDIR /home/scalafix/ScalaFixExamples
