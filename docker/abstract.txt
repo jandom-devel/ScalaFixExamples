@@ -7,8 +7,7 @@ The ZIP file may be downloaded from Zenodo at the URL: <to be filled later>
 
 The SHA256 checksum of the ZIP file is: <to be filled later>
 
-Due to this issue [https://github.com/moby/moby/commit/9f6b562dd12ef7b1f9e2f8e6f2ab6477790a6594],
-a recent version of Docker is required (20.10.16 or later should be fine).
+A recent version of Docker is required (20.10.16 or later should be fine).
 
 All the examples (and more) shown in the paper are available in this artefact. Moreover, it should be possible to reproduce
 all the results of the benchmarks. Obviously, absolute performance values will vary from a machine to the other. In particular,
