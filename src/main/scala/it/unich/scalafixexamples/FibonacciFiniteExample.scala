@@ -32,7 +32,7 @@ object FibonacciFiniteExample extends App:
         (u: Int) => if u <= 1 then 1 else rho(u - 1) + rho(u - 2)
 
     val infl = Relation((i: Int) => Set(i - 1, i - 2))
-    val unknowns = 0 to 10
+    val unknowns = 0 to 6
     val inputUnknows = Set(0, 1)
     val eqs = finite.FiniteEquationSystem(body, infl, unknowns, inputUnknows)
     val sol = finite.WorkListSolver(eqs)(Assignment(1))
