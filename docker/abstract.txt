@@ -1,0 +1,16 @@
+This artifact is a docker image containing both ScalaFix, the fixpoint library, and ScalaFixExample, the collection of all
+the examples and benchmarks shown in the paper. Both the source code and compiled bytecode are provided. Moreover, the image
+contains all the libraries, compilers and tools needed to execute examples and benchmarks, which may be eventually modified
+and recompiled if desired.
+
+The ZIP file may be downloaded from Zenodo at the URL: <to be filled later>
+
+The SHA256 checksum of the ZIP file is: <to be filled later>
+
+Due to this issue [https://github.com/moby/moby/commit/9f6b562dd12ef7b1f9e2f8e6f2ab6477790a6594],
+a recent version of Docker is required (20.10.16 or later should be fine).
+
+All the examples (and more) shown in the paper are available in this artifact. Moreover, it should be possible to reproduce
+all the results of the benchmarks. Obviously, absolute performance values will vary from a machine to the other. In particular,
+the results shown in the paper have been obtain with an Intel Core i2500K, 16 GB RAM, clockefixed at 1.6GHz and Turbo Boost
+disabled.

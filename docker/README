@@ -1,12 +1,24 @@
 # Instructions for the ScalaFix artifact
 
-The artifact is made available as a Docker image `scalafix-examples.tgz`. Load this image in your Docker environment with
+This artifact is a docker image containing both ScalaFix, the fixpoint library, and ScalaFixExample, the collection of all
+the examples and benchmarks shown in the paper. Both the source code and compiled bytecode are provided. Moreover, the image
+contains all the libraries, compilers and tools needed to execute examples and benchmarks, which may be eventually modified
+and recompiled if desired.
+
+The ZIP contains the files `License.txt` and this `README`, as required by the artifact guidelines. The `README` is actually
+in Markdown format. The file `README.pdf` contains a PDF version of  `README`, while `scalafix-examples.tgz` is the Docker
+image of the artifact.
+
+Load this image in your Docker environment with
 
 `docker load -i scalafix-examples.tgz`
 
 Then, you can create a container and run it with
 
 `docker run --rm -it scalafix-examples`
+
+Due to this issue described in https://github.com/moby/moby/commit/9f6b562dd12ef7b1f9e2f8e6f2ab6477790a6594,
+a recent version of Docker is required (20.10.16 or later should be fine).
 
 The image `scalafix-examples` contains an installation of Fedora 36 with Scalafix and all its dependencies. Once started, the bash shell is executed as the user `scalafix` in the working directory `/home/scalafix/ScalaFixExamples`. This directory contains the source code of the ScalaFix examples. In particular, according to the standard convention in the Scala world, the source code is in `/home/scalafix/ScalaFixExamples/src/main/scala/it/unich/scalafixexamples`. Some of these examples are taken from the paper, others are new.
 
@@ -80,4 +92,4 @@ From the `/home/scalafix/ScalaFix` directory you can run the ScalaFix unit tests
 
 ## Docker
 
-The Dockerfile which generates the current image is available in the directory `/home/scalafix/ScalaFixExamples/docker`.
+The Dockerfile which generates the Docker image is available in the directory `/home/scalafix/ScalaFixExamples/docker`.
