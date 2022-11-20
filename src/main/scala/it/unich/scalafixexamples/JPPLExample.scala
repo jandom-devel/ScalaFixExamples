@@ -28,18 +28,18 @@ import it.unich.scalafix.utils.Relation
 
 object JPPLExampleEquationSystems:
 
-  // the constraint system {x=0}
+  // the constraint system {i=0}
   val ieq0 = ConstraintSystem.of(
     Constraint.of(LinearExpression.of(0, 1), Constraint.ConstraintType.EQUAL)
   )
 
-  // the constraint x<=10
+  // the constraint i<=10
   val ileq10 = Constraint.of(
     LinearExpression.of(-10, 1),
     Constraint.ConstraintType.LESS_OR_EQUAL
   )
 
-  // the linear expression x+1
+  // the linear expression i+1
   val iplus1 = LinearExpression.of(1, 1)
 
   def buildFiniteEQS[P <: Property[P]](dom: jppl.Domain[P]) =
@@ -113,7 +113,7 @@ object JPPLExampleEquationSystems:
 
 class JPPLExample[P <: Property[P]](val dom: jppl.Domain[P]):
   def run() =
-    PPL.ioSetVariableOutputFunction((i: Long) => "x" + i)
+    PPL.ioSetVariableOutputFunction((i: Long) => if i == 0 then "i" else "x" + i)
     val simpleEqs = JPPLExampleEquationSystems.buildFiniteEQS(dom)
     val solution = WorkListSolver(simpleEqs)(Assignment(dom.createEmpty(1)))
     println(solution)
@@ -126,7 +126,7 @@ object JPPLPolyhedronExample extends App:
 
 class JPPLWithWideningExample[P <: Property[P]](dom: jppl.Domain[P]):
   def run() =
-    PPL.ioSetVariableOutputFunction((i: Long) => "x" + i)
+    PPL.ioSetVariableOutputFunction((i: Long) => if i == 0 then "i" else "x" + i)
     val simpleEqs = JPPLExampleEquationSystems.buildFiniteEQS(dom)
     val widening = Combo[P]((x: P, y: P) => y.clone().upperBound(x).widening(x))
     val comboAssignment = ComboAssignment(widening).restrict(Set(1))
@@ -143,7 +143,7 @@ object JPPLPolyhedronWithWideningExample extends App:
 
 class JPPLWithWideningAutomaticExample[P <: Property[P]](dom: jppl.Domain[P]):
   def run() =
-    PPL.ioSetVariableOutputFunction((i: Long) => "x" + i)
+    PPL.ioSetVariableOutputFunction((i: Long) => if i == 0 then "i" else "x" + i)
     val simpleEqs = JPPLExampleEquationSystems.buildFiniteEQS(dom)
     val widening = Combo[P]((x: P, y: P) => y.clone().upperBound(x).widening(x))
     val ordering = DFOrdering(simpleEqs)
@@ -162,7 +162,7 @@ object JPPLPolyhedronWithWideningAutomaticExample extends App:
 
 class JPPLGraphBasedExample[P <: Property[P]](using dom: jppl.Domain[P]):
   def run() =
-    PPL.ioSetVariableOutputFunction((i: Long) => "x" + i)
+    PPL.ioSetVariableOutputFunction((i: Long) => if i == 0 then "i" else "x" + i)
     val simpleEqs = JPPLExampleEquationSystems.buildGraphEQS
     val widening = Combo[P]((x: P, y: P) => y.clone().upperBound(x).widening(x))
     val ordering = DFOrdering(simpleEqs)
